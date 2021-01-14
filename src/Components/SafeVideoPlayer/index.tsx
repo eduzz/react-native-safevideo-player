@@ -7,6 +7,7 @@ import enterFullscreenImage from '../../Assets/enter-fullscreen.png';
 import exitFullscreenImage from '../../Assets/exit-fullscreen.png';
 import optionsImage from '../../Assets/options.png';
 import ProgressBar from './ProgressBar';
+import OptionsModal from './OptionsModal';
 
 export interface SafeVideoPlayerProps {
   title?: string;
@@ -23,6 +24,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
   const [fullscreen, setFullscreen] = useState(false);
   const [controlsEnabled, setControlsEnabled] = useState(true);
+  const [showingOptions, setShowingOptions] = useState(false);
 
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -98,6 +100,14 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     setPlaying(true);
   };
 
+  const showOptions = () => {
+    setShowingOptions(true);
+  };
+
+  const hideOptions = () => {
+    setShowingOptions(false);
+  };
+
   const formatTime = (seconds: number) => {
     const date = new Date(0);
 
@@ -125,7 +135,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         <View style={styles.header}>
           <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
           <View style={styles.headerActions}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={showOptions}>
               <Image style={styles.optionsIcon} source={optionsImage} />
             </TouchableOpacity>
           </View>
@@ -151,6 +161,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           />
         </View>
       </Animated.View>
+      <OptionsModal visible={showingOptions} onRequestClose={hideOptions} />
     </View>
   );
 };
