@@ -23,6 +23,38 @@ import SafevideoPlayer from "react-native-safevideo-player";
 />
 ```
 
+### Configurable props
+* [title](#title)
+* [progressBarColor](#progressBarColor)
+* [onEnterFullscreen](#onEnterFullscreen)
+* [onExitFullscreen](#onExitFullscreen)
+
+#### title
+The text that will be shown in the player's header
+* **string**
+
+Platforms: All
+
+#### progressBarColor
+The color that will override the default player's progressBar color
+* **string**
+
+Default: #FEC92D
+
+Platforms: All
+
+#### onEnterFullscreen
+Callback executed when the player enters full screen
+* **() => void**
+
+Platforms: All
+
+#### onExitFullscreen
+Callback executed when the player exit full screen
+* **() => void**
+
+Platforms: All
+
 ## Examples
 
 ```sh
