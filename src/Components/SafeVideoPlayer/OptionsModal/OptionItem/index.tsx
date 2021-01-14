@@ -4,15 +4,16 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 interface IProps {
   iconImage: any;
   title: string;
+  color?: string;
   onPress?: () => void;
 }
 
-const OptionItem = ({ iconImage, title, onPress }: IProps) => {
+const OptionItem = ({ iconImage, color,  title, onPress }: IProps) => {
   return (
     <TouchableOpacity onPress={onPress && onPress}>
       <View style={styles.container}>
-        <Image style={styles.iconImage} source={iconImage} />
-        <Text style={styles.title} numberOfLines={1}>{title}</Text>
+        <Image style={[styles.iconImage, { tintColor: color }]} source={iconImage} />
+        <Text style={[styles.title, { color }]} numberOfLines={1}>{title}</Text>
       </View>
     </TouchableOpacity>
   );

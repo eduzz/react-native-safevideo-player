@@ -12,6 +12,8 @@ import OptionsModal from './OptionsModal';
 export interface SafeVideoPlayerProps {
   title?: string;
   progressBarColor?: string;
+  textColor?: string;
+  backgroundColor?: string;
   onEnterFullscreen?: () => void;
   onExitFullscreen?: () => void;
 }
@@ -29,7 +31,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, onEnterFullscreen, onExitFullscreen, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, ...videoProps } = props;
 
   const play = () => {
     setPlaying(true);
@@ -161,7 +163,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           />
         </View>
       </Animated.View>
-      <OptionsModal visible={showingOptions} onRequestClose={hideOptions} />
+      <OptionsModal visible={showingOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions} />
     </View>
   );
 };

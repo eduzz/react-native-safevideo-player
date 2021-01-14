@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Switch, Text, View } from 'react-native';
 import SafeVideoPlayer, { LoadError } from 'react-native-safevideo-player';
 
 export default function App() {
   const [fullscreen, setFullscreen] = React.useState(false);
+  const [darkModeActive, setDarkModeActive] = React.useState(false);
 
   const handleError = (error: LoadError) => {
     console.warn(error);
@@ -17,27 +18,55 @@ export default function App() {
     setFullscreen(false);
   };
 
+  const toggleDarkMode = () => {
+    setDarkModeActive(!darkModeActive);
+  };
+
+  const theme = {
+    get textColor() {
+      return darkModeActive ? '#fff' : '#000';
+    },
+    get backgroundColor() {
+      return darkModeActive ? '#1e2124' : '#fff';
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
       <SafeVideoPlayer
         title='SaveVideo player example'
+        textColor={theme.textColor}
+        backgroundColor={theme.backgroundColor}
         onError={handleError}
         onEnterFullscreen={onEnterFullscreen}
         onExitFullscreen={onExitFullscreen}
         style={[styles.player, fullscreen && { height: '100%' }]}
         source={{ uri: 'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8' }}
       />
-    </View>
+      <View style={styles.darkMode}>
+        <Switch value={darkModeActive} onValueChange={toggleDarkMode} />
+        <Text style={[styles.darkModeLabel, { color: theme.textColor }]}>Dark mode</Text>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center'
+    flex: 1
   },
   player: { 
     width: '100%', 
-    height: Dimensions.get('window').width / 1.77,
+    height: Dimensions.get('window').width / 1.77
+  },
+  darkMode: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    marginHorizontal: 8
+  },
+  darkModeLabel: {
+    marginLeft: 8,
+    fontSize: 18
   }
 })

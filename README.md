@@ -27,6 +27,8 @@ import SafevideoPlayer from "react-native-safevideo-player";
 ### Configurable props
 * [title](#title)
 * [progressBarColor](#progressBarColor)
+* [textColor](#textColor)
+* [backgroundColor](#backgroundColor)
 * [onEnterFullscreen](#onEnterFullscreen)
 * [onExitFullscreen](#onExitFullscreen)
 * [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
@@ -49,7 +51,23 @@ Platforms: All
 The color that will override the default player's progressBar color
 * **string**
 
-Default: ![alt text](https://via.placeholder.com/15/FEC92D/000000?text=+) #FEC92D
+Default: #FEC92D
+
+Platforms: All
+
+#### textColor
+The color that will override the default player's menu background color
+* **string**
+
+Default: #000
+
+Platforms: All
+
+#### backgroundColor
+The color that will override the default player's menu text and icons color
+* **string**
+
+Default: #FFF
 
 Platforms: All
 

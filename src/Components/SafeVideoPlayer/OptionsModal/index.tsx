@@ -7,6 +7,8 @@ import videoSpeedImage from '../../../Assets/video-speed.png';
 
 interface IProps {
   visible: boolean;
+  textColor?: string;
+  backgroundColor?: string;
   onRequestClose?: () => void;
 }
 
@@ -17,7 +19,7 @@ const ANIMATION_INTERVAL = {
 const ANIMATION_DURATION = 200;
 const TARGET_OPACITY = 0.7;
 
-const OptionsModal = ({ visible, onRequestClose }: IProps) => {
+const OptionsModal = ({ visible, backgroundColor, textColor, onRequestClose }: IProps) => {
   const slideAnim = useRef(new Animated.Value(ANIMATION_INTERVAL.initial)).current;
   const [controlsPercenageOfScreen, setControlsPercenageOfScreen] = useState(0);
   const [animationValue, setAnimationValue] = useState(ANIMATION_INTERVAL.initial);
@@ -60,13 +62,13 @@ const OptionsModal = ({ visible, onRequestClose }: IProps) => {
       <Animated.View style={[styles.backdrop, { opacity }]} />
       <TouchableWithoutFeedback onPress={onRequestClose}>
         <View style={styles.content}>
-          <Animated.View style={[styles.options, { bottom }]} onLayout={onLayout}>
+          <Animated.View style={[styles.options, { backgroundColor, bottom }]} onLayout={onLayout}>
             <ScrollView>
-              <OptionItem title='Qualidade' iconImage={qualityImage} />
-              <OptionItem title='Velocidade' iconImage={videoSpeedImage} />
+              <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} />
+              <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} />
             </ScrollView>
-            <View style={styles.divider} />
-            <OptionItem title='Fechar' iconImage={closeImage} onPress={onRequestClose} />
+            <View style={[styles.divider, { backgroundColor: textColor }]} />
+            <OptionItem title='Fechar' iconImage={closeImage} color={textColor} onPress={onRequestClose} />
           </Animated.View>
         </View>
       </TouchableWithoutFeedback>
