@@ -23,6 +23,15 @@ import SafevideoPlayer from "react-native-safevideo-player";
 />
 ```
 
+## Examples
+
+```sh
+# Android app
+yarn example android
+# iOS app
+yarn example ios
+```
+
 ## License
 
 MIT
