@@ -32,6 +32,8 @@ yarn example android
 yarn example ios
 ```
 
+<img src="https://cdn.discordapp.com/attachments/770721962464247830/799283972973658112/ezgif.com-video-to-gif-3.gif" width="200" />
+
 ## License
 
 MIT
