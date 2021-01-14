@@ -48,7 +48,7 @@ Platforms: All
 The color that will override the default player's progressBar color
 * **string**
 
-Default: <p style='color:#FEC92D'>#FEC92D<p>
+Default: ![#FEC92D](https://via.placeholder.com/15/FEC92D/000000?text=+) `#FEC92D`
 
 Platforms: All
 
