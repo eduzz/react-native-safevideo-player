@@ -28,6 +28,15 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [progressBarColor](#progressBarColor)
 * [onEnterFullscreen](#onEnterFullscreen)
 * [onExitFullscreen](#onExitFullscreen)
+* [Every Prop from React Native Video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
+
+### Event props
+* [Every Prop from React Native Video](https://github.com/react-native-video/react-native-video/blob/master/README.md#event-props)
+
+### Methods
+* [Every Prop from React Native Video](https://github.com/react-native-video/react-native-video/blob/master/README.md#methods)
+
+## Configurable props
 
 #### title
 The text that will be shown in the player's header
