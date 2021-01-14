@@ -28,13 +28,13 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [progressBarColor](#progressBarColor)
 * [onEnterFullscreen](#onEnterFullscreen)
 * [onExitFullscreen](#onExitFullscreen)
-* [Every prop from React Native Video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
+* [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
 
 ### Event props
-* [Every prop from React Native Video](https://github.com/react-native-video/react-native-video/blob/master/README.md#event-props)
+* [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#event-props)
 
 ### Methods
-* [Every method from React Native Video](https://github.com/react-native-video/react-native-video/blob/master/README.md#methods)
+* [Every method from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#methods)
 
 ## Configurable props
 
