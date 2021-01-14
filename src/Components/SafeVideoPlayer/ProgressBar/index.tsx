@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, GestureResponderEvent, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 interface IProps {
@@ -13,7 +13,9 @@ const ProgressBar = ({ currentTime, duration, progressBarColor, onTouchStart, on
   const [dragging, setDragging] = useState(false);
   const [localTime, setLocalTime] = useState(currentTime);
 
-  const progress = (((dragging ? localTime : currentTime) / duration) || 0) * 100;
+  useEffect(() => setLocalTime(currentTime), [currentTime]);
+
+  const progress = ((localTime / duration) || 0) * 100;
 
   const _onTouchStart = () => {
     setDragging(true);

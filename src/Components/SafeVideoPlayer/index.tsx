@@ -3,10 +3,16 @@ import { Image, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, Vi
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
+import enterFullscreenImage from '../../Assets/enter-fullscreen.png';
+import exitFullscreenImage from '../../Assets/exit-fullscreen.png';
+import optionsImage from '../../Assets/options.png';
 import ProgressBar from './ProgressBar';
 
 export interface SafeVideoPlayerProps {
+  title?: string;
   progressBarColor?: string;
+  onEnterFullscreen?: () => void;
+  onExitFullscreen?: () => void;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -16,8 +22,11 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(false);
   const [timeoutId, setTimeoutId] = useState<any>();
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
+  const [fullscreen, setFullscreen] = useState(false);
 
   const videoRef = useRef<any>(null);
+
+  const { title, progressBarColor, onEnterFullscreen, onExitFullscreen, ...videoProps } = props;
 
   const play = () => {
     setPlaying(true);
@@ -27,6 +36,16 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const pause = () => {
     setPlaying(false);
     touchScreen();
+  };
+
+  const enterFullscreen = () => {
+    setFullscreen(true);
+    onEnterFullscreen && onEnterFullscreen();
+  };
+
+  const exitFullscreen = () => {
+    setFullscreen(false);
+    onExitFullscreen && onExitFullscreen();
   };
 
   const touchScreen = () => {
@@ -68,6 +87,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
 
   const formatTime = (seconds: number) => {
     const date = new Date(0);
+
     date.setSeconds(seconds);
     let timeString = date.toISOString().substr(11, 8);
 
@@ -77,8 +97,6 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
 
     return timeString;
   };
-
-  const { progressBarColor, ...videoProps } = props;
 
   return (
     <View>
@@ -95,6 +113,12 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
             <>
               <View style={styles.backdrop} />
               <View style={styles.header}>
+                <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
+                <View style={styles.headerActions}>
+                  <TouchableOpacity>
+                    <Image style={styles.optionsIcon} source={optionsImage} />
+                  </TouchableOpacity>
+                </View>
               </View>
               <View style={styles.body}>
                 <TouchableOpacity onPress={playing ? pause : play}>
@@ -102,7 +126,12 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.footer}>
-                <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
+                <View style={styles.footerActions}>
+                  <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
+                  <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
+                    <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
+                  </TouchableOpacity>
+                </View>
                 <ProgressBar 
                   currentTime={videoInfo.currentTime} 
                   duration={videoInfo.duration} 
@@ -135,7 +164,23 @@ const styles = StyleSheet.create({
     opacity: .7
   },
   header: {
-    flex: 0
+    flex: 0,
+    padding: 8,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  videoTitle: {
+    flex: 1,
+    color: '#fff',
+    fontSize: 16
+  },
+  headerActions: {
+    flex: 0,
+    paddingLeft: 8
+  },
+  optionsIcon: {
+    width: 20,
+    height: 20
   },
   body: {
     flex: 1,
@@ -152,10 +197,19 @@ const styles = StyleSheet.create({
     flex: 0,
     width: '100%'
   },
+  footerActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8
+  },
   timer: {
-    marginBottom: 8,
     color: '#fff',
     fontSize: 12
+  },
+  fullscreenIcon: {
+    width: 15,
+    height: 15
   }
 });
 
