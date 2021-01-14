@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
@@ -18,24 +18,23 @@ export interface SafeVideoPlayerProps {
 const CONTROLS_DISPLAY_TIME = 4000;
 
 const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
-  const [showingControls, setShowingControls] = useState(true);
   const [playing, setPlaying] = useState(false);
   const [timeoutId, setTimeoutId] = useState<any>();
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
   const [fullscreen, setFullscreen] = useState(false);
+  const [controlsEnabled, setControlsEnabled] = useState(true);
 
   const videoRef = useRef<any>(null);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const { title, progressBarColor, onEnterFullscreen, onExitFullscreen, ...videoProps } = props;
 
   const play = () => {
     setPlaying(true);
-    touchScreen();
   };
 
   const pause = () => {
     setPlaying(false);
-    touchScreen();
   };
 
   const enterFullscreen = () => {
@@ -48,16 +47,31 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     onExitFullscreen && onExitFullscreen();
   };
 
-  const touchScreen = () => {
-    setShowingControls(true);
-    
+  const onTouchStart = () => {
     clearTimeout(timeoutId);
 
+    fadeControls(true);
+  };
+
+  const onTouchEnd = () => {
     setTimeoutId(
       setTimeout(() => {
-        setShowingControls(false);
+        fadeControls(false);
       }, CONTROLS_DISPLAY_TIME)
     );
+  };
+
+  const fadeControls = (fadeIn: boolean) => {
+    Animated.timing(
+      fadeAnim,
+      {
+        toValue: fadeIn ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true
+      }
+    ).start();
+
+    setControlsEnabled(fadeIn);
   };
 
   const onLoad = (event: OnLoadData) => {
@@ -82,7 +96,6 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const onSeek = (seekTo: number) => {
     videoRef.current.seek(seekTo);
     setPlaying(true);
-    touchScreen();
   };
 
   const formatTime = (seconds: number) => {
@@ -99,7 +112,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   };
 
   return (
-    <View>
+    <View onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <Video
         ref={videoRef}
         paused={!playing}
@@ -107,43 +120,37 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         onProgress={onProgress}
         {...videoProps}
       />
-      <TouchableWithoutFeedback onPress={touchScreen}>
-        <View style={styles.controls}>
-          {(showingControls || !playing) &&
-            <>
-              <View style={styles.backdrop} />
-              <View style={styles.header}>
-                <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
-                <View style={styles.headerActions}>
-                  <TouchableOpacity>
-                    <Image style={styles.optionsIcon} source={optionsImage} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.body}>
-                <TouchableOpacity onPress={playing ? pause : play}>
-                  <Image style={styles.playPauseIcon} source={playing ? pauseImage : playImage} />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.footer}>
-                <View style={styles.footerActions}>
-                  <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
-                  <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
-                    <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
-                  </TouchableOpacity>
-                </View>
-                <ProgressBar 
-                  currentTime={videoInfo.currentTime} 
-                  duration={videoInfo.duration} 
-                  progressBarColor={progressBarColor}
-                  onTouchStart={onProgressTouchStart}
-                  onSeek={onSeek}
-                />
-              </View>
-            </>
-          }
+      <Animated.View style={[styles.controls, { opacity: fadeAnim }]} pointerEvents={controlsEnabled ? 'auto' : 'none'}>
+        <View style={styles.backdrop} />
+        <View style={styles.header}>
+          <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
+          <View style={styles.headerActions}>
+            <TouchableOpacity>
+              <Image style={styles.optionsIcon} source={optionsImage} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </TouchableWithoutFeedback>
+        <View style={styles.body}>
+          <TouchableOpacity onPress={playing ? pause : play}>
+            <Image style={styles.playPauseIcon} source={playing ? pauseImage : playImage} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.footer}>
+          <View style={styles.footerActions}>
+            <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
+            <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
+              <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
+            </TouchableOpacity>
+          </View>
+          <ProgressBar 
+            currentTime={videoInfo.currentTime} 
+            duration={videoInfo.duration} 
+            progressBarColor={progressBarColor}
+            onTouchStart={onProgressTouchStart}
+            onSeek={onSeek}
+          />
+        </View>
+      </Animated.View>
     </View>
   );
 };
