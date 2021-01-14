@@ -1,19 +1,19 @@
 import * as React from 'react';
-
-import { StyleSheet, View, Text } from 'react-native';
-import SafevideoPlayer from 'react-native-safevideo-player';
-
+import { Dimensions, StyleSheet, View } from 'react-native';
+import SafeVideoPlayer, { LoadError } from 'react-native-safevideo-player';
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    SafevideoPlayer.multiply(3, 7).then(setResult);
-  }, []);
+  const handleError = (error: LoadError) => {
+    console.warn(error);
+  };
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <SafeVideoPlayer
+        onError={handleError}
+        style={styles.player}
+        source={{ uri: 'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8' }}
+      />
     </View>
   );
 }
@@ -21,12 +21,10 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
-  },
-});
+  player: { 
+    width: '100%', 
+    height: Dimensions.get('window').width / 1.77,
+  }
+})

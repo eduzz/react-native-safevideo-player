@@ -1,0 +1,72 @@
+import React, { useState } from 'react';
+import { Dimensions, GestureResponderEvent, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+
+interface IProps {
+  currentTime: number;
+  duration: number;
+  onTouchStart?: () => void;
+  onSeek?: (seekTo: number) => void;
+  progressBarColor?: string;
+}
+
+const ProgressBar = ({ currentTime, duration, progressBarColor, onTouchStart, onSeek }: IProps) => {
+  const [dragging, setDragging] = useState(false);
+  const [localTime, setLocalTime] = useState(currentTime);
+
+  const progress = (((dragging ? localTime : currentTime) / duration) || 0) * 100;
+
+  const _onTouchStart = () => {
+    setDragging(true);
+    onTouchStart && onTouchStart();
+  };
+
+  const _onTouchMove = (event: GestureResponderEvent) => {
+    setLocalTime(getTimeByTouchPosition(event.nativeEvent.pageX));
+  };
+
+  const _onTouchEnd = (event: GestureResponderEvent) => {
+    setDragging(false);
+    onSeek && onSeek(getTimeByTouchPosition(event.nativeEvent.pageX));
+  };
+
+  const getTimeByTouchPosition = (pageX: number) => {
+    return (pageX / Dimensions.get('window').width) * duration;
+  };
+
+  return (
+    <View style={styles.container} onTouchMove={_onTouchMove} onTouchEnd={_onTouchEnd}>
+      <View style={[styles.progress, { backgroundColor: progressBarColor || '#FEC92D', width: `${progress}%` }]}>
+        <TouchableWithoutFeedback onPressIn={_onTouchStart}>
+          <View style={[styles.dot, { backgroundColor: progressBarColor || '#FEC92D' }, dragging && styles.dotDragging]} />
+        </TouchableWithoutFeedback>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: 5,
+    backgroundColor: '#424242'
+  },
+  progress: {
+    position: 'absolute',
+    width: '20%',
+    height: 5,
+    alignItems: 'flex-end',
+    justifyContent: 'center'
+  },
+  dot: {
+    width: 14,
+    height: 14,
+    borderRadius: 7
+  },
+  dotDragging: {
+    width: 20,
+    height: 20,
+    borderRadius: 10
+  }
+});
+
+export default ProgressBar;

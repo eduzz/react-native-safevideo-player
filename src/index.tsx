@@ -1,5 +1,5 @@
-export default {
-  multiply(a: number, b: number) {
-    return Promise.resolve(a * b);
-  },
-};
+import SafeVideoPlayer from './Components/SafeVideoPlayer';
+
+export default SafeVideoPlayer;
+
+export * from 'react-native-video';

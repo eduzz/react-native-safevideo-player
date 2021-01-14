@@ -149,5 +149,9 @@
         }
       ]
     ]
+  },
+  "dependencies": {
+    "@types/react-native-video": "^5.0.3",
+    "react-native-video": "^5.1.0-alpha8"
   }
 }
