@@ -21,7 +21,7 @@ const TARGET_OPACITY = 0.7;
 
 const OptionsModal = ({ visible, backgroundColor, textColor, onRequestClose, onFinishClosing, children }: IProps) => {
   const slideAnim = useRef(new Animated.Value(ANIMATION_INTERVAL.initial)).current;
-  const [controlsPercenageOfScreen, setControlsPercenageOfScreen] = useState(0);
+  const [controlsPercenageOfScreen, setControlsPercenageOfScreen] = useState(100);
   const [animationValue, setAnimationValue] = useState(ANIMATION_INTERVAL.initial);
   const [localVisible, setLocalVisible] = useState(visible);
 
