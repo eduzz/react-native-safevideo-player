@@ -12,7 +12,15 @@ import checkImage from '../../Assets/check.png';
 import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
-import type { SafeVideoPlayerProps } from 'react-native-safevideo-player';
+
+interface SafeVideoPlayerProps {
+  title?: string;
+  progressBarColor?: string;
+  textColor?: string;
+  backgroundColor?: string;
+  onEnterFullscreen?: () => void;
+  onExitFullscreen?: () => void;
+}
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
