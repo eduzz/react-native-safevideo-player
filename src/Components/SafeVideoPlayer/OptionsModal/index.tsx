@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, LayoutChangeEvent, Modal, SafeAreaView, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Dimensions, LayoutChangeEvent, Modal, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import OptionItem from './OptionItem';
 import closeImage from '../../../Assets/close.png';
 
