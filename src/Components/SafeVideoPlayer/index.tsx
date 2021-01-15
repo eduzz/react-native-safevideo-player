@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flex: 0,
-    padding: 8,
+    padding: 16,
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     height: 50
   },
   footer: {
-    padding: 8,
+    padding: 16,
     paddingBottom: 16,
     flex: 0,
     width: '100%'

@@ -60,6 +60,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   dot: {
+    position: 'absolute',
+    right: -7,
     width: 14,
     height: 14,
     borderRadius: 7

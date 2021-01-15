@@ -13,7 +13,7 @@ const OptionItem = ({ title, iconImage, color, onPress }: IProps) => {
   const handlePress = () => {
     setTimeout(() => {
       onPress && onPress();
-    }, ANIMATION_DURATION + 100);
+    }, ANIMATION_DURATION + 200);
   };
 
   return (
