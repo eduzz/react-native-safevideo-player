@@ -5,9 +5,13 @@ import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
 import enterFullscreenImage from '../../Assets/enter-fullscreen.png';
 import exitFullscreenImage from '../../Assets/exit-fullscreen.png';
+import qualityImage from '../../Assets/quality.png';
+import videoSpeedImage from '../../Assets/video-speed.png';
 import optionsImage from '../../Assets/options.png';
+import checkImage from '../../Assets/check.png';
 import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
+import OptionItem from './OptionsModal/OptionItem';
 
 export interface SafeVideoPlayerProps {
   title?: string;
@@ -22,11 +26,13 @@ const CONTROLS_DISPLAY_TIME = 4000;
 
 const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(false);
+  const [rate, setRate] = useState(1);
   const [timeoutId, setTimeoutId] = useState<any>();
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
   const [fullscreen, setFullscreen] = useState(false);
   const [controlsEnabled, setControlsEnabled] = useState(true);
-  const [showingOptions, setShowingOptions] = useState(false);
+  const [showingSettings, setShowingSettings] = useState(false);
+  const [showingSpeedOptions, setShowingSpeedOptions] = useState(false);
 
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -39,6 +45,10 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
 
   const pause = () => {
     setPlaying(false);
+  };
+
+  const setVideoRate = (_rate: number) => () => {
+    setRate(_rate);
   };
 
   const enterFullscreen = () => {
@@ -103,11 +113,20 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   };
 
   const showOptions = () => {
-    setShowingOptions(true);
+    setShowingSettings(true);
   };
 
   const hideOptions = () => {
-    setShowingOptions(false);
+    setShowingSettings(false);
+  };
+
+  const showSpeedOptions = () => {
+    hideOptions();
+    setShowingSpeedOptions(true);
+  };
+
+  const hideSpeedOptions = () => {
+    setShowingSpeedOptions(false);
   };
 
   const formatTime = (seconds: number) => {
@@ -128,6 +147,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
       <Video
         ref={videoRef}
         paused={!playing}
+        rate={rate}
         onLoad={onLoad}
         onProgress={onProgress}
         {...videoProps}
@@ -163,7 +183,20 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           />
         </View>
       </Animated.View>
-      <OptionsModal visible={showingOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions} />
+      <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
+        <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} />
+        <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />
+      </OptionsModal>
+      <OptionsModal visible={showingSpeedOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideSpeedOptions}>
+        <OptionItem title='0.25x' onPress={setVideoRate(0.25)} iconImage={rate === 0.25 && checkImage} color={textColor} />
+        <OptionItem title='0.5x' onPress={setVideoRate(0.5)} iconImage={rate === 0.5 && checkImage} color={textColor} />
+        <OptionItem title='0.75x' onPress={setVideoRate(0.75)} iconImage={rate === 0.75 && checkImage} color={textColor} />
+        <OptionItem title='Normal' onPress={setVideoRate(1)} iconImage={rate === 1 && checkImage} color={textColor} />
+        <OptionItem title='1.25x' onPress={setVideoRate(1.25)} iconImage={rate === 1.25 && checkImage} color={textColor} />
+        <OptionItem title='1.5x' onPress={setVideoRate(1.5)} iconImage={rate === 1.5 && checkImage} color={textColor} />
+        <OptionItem title='1.75x' onPress={setVideoRate(1.75)} iconImage={rate === 1.75 && checkImage} color={textColor} />
+        <OptionItem title='2x' onPress={setVideoRate(2)} iconImage={rate === 2 && checkImage} color={textColor} />
+      </OptionsModal>
     </View>
   );
 };

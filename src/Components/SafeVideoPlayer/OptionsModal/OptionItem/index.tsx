@@ -1,18 +1,25 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ANIMATION_DURATION } from '..';
 
 interface IProps {
-  iconImage: any;
   title: string;
+  iconImage?: any;
   color?: string;
   onPress?: () => void;
 }
 
-const OptionItem = ({ iconImage, color,  title, onPress }: IProps) => {
+const OptionItem = ({ title, iconImage, color, onPress }: IProps) => {
+  const handlePress = () => {
+    setTimeout(() => {
+      onPress && onPress();
+    }, ANIMATION_DURATION + 100);
+  };
+
   return (
-    <TouchableOpacity onPress={onPress && onPress}>
+    <TouchableOpacity onPress={handlePress}>
       <View style={styles.container}>
-        <Image style={[styles.iconImage, { tintColor: color }]} source={iconImage} />
+        <Image style={[styles.iconImage, { tintColor: color }]} source={iconImage || null} />
         <Text style={[styles.title, { color }]} numberOfLines={1}>{title}</Text>
       </View>
     </TouchableOpacity>

@@ -1,25 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, LayoutChangeEvent, Modal, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Dimensions, LayoutChangeEvent, Modal, SafeAreaView, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import OptionItem from './OptionItem';
 import closeImage from '../../../Assets/close.png';
-import qualityImage from '../../../Assets/quality.png';
-import videoSpeedImage from '../../../Assets/video-speed.png';
 
 interface IProps {
   visible: boolean;
   textColor?: string;
   backgroundColor?: string;
   onRequestClose?: () => void;
+  onFinishClosing?: () => void;
+  children?: any;
 }
 
+export const ANIMATION_DURATION = 200;
 const ANIMATION_INTERVAL = {
   initial: 0,
   final: 1
 };
-const ANIMATION_DURATION = 200;
 const TARGET_OPACITY = 0.7;
 
-const OptionsModal = ({ visible, backgroundColor, textColor, onRequestClose }: IProps) => {
+const OptionsModal = ({ visible, backgroundColor, textColor, onRequestClose, onFinishClosing, children }: IProps) => {
   const slideAnim = useRef(new Animated.Value(ANIMATION_INTERVAL.initial)).current;
   const [controlsPercenageOfScreen, setControlsPercenageOfScreen] = useState(0);
   const [animationValue, setAnimationValue] = useState(ANIMATION_INTERVAL.initial);
@@ -44,7 +44,10 @@ const OptionsModal = ({ visible, backgroundColor, textColor, onRequestClose }: I
         useNativeDriver: true
       }
     ).start(() => {
-      setLocalVisible(visible);
+      if(!visible) {
+        setLocalVisible(visible);
+        onFinishClosing && onFinishClosing();
+      }
     });
   }, [visible]);
 
@@ -59,26 +62,25 @@ const OptionsModal = ({ visible, backgroundColor, textColor, onRequestClose }: I
 
   return (
     <Modal animationType="none" visible={localVisible} transparent supportedOrientations={['portrait', 'landscape']}>
-      <Animated.View style={[styles.backdrop, { opacity }]} />
-      <TouchableWithoutFeedback onPress={onRequestClose}>
+      <SafeAreaView style={styles.container} onTouchEnd={onRequestClose}>
+        <Animated.View style={[styles.backdrop, { opacity }]} />
         <View style={styles.content}>
           <Animated.View style={[styles.options, { backgroundColor, bottom }]} onLayout={onLayout}>
             <ScrollView>
-              <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} />
-              <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} />
+              {children}
             </ScrollView>
             <View style={[styles.divider, { backgroundColor: textColor }]} />
             <OptionItem title='Fechar' iconImage={closeImage} color={textColor} onPress={onRequestClose} />
           </Animated.View>
         </View>
-      </TouchableWithoutFeedback>
+      </SafeAreaView>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-
+    flex: 1
   },
   content: {
     flex: 1,
@@ -88,7 +90,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     flex: 0,
-    paddingBottom: 56,
     backgroundColor: '#fff'
   },
   backdrop: {
