@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Animated, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
@@ -20,6 +20,7 @@ interface SafeVideoPlayerProps {
   backgroundColor?: string;
   onEnterFullscreen?: () => void;
   onExitFullscreen?: () => void;
+  containerStyle?: ViewStyle;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -37,7 +38,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, ...videoProps } = props;
 
   const play = () => {
     setPlaying(true);
@@ -143,7 +144,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   };
 
   return (
-    <View onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <View style={containerStyle} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <Video
         ref={videoRef}
         paused={!playing}
