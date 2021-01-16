@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Switch, Text, View } from 'react-native';
 import SafeVideoPlayer, { LoadError } from 'react-native-safevideo-player';
 
 export default function App() {
@@ -32,7 +32,7 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }, fullscreen && { justifyContent: 'center', alignItems: 'center' }]}>
       <SafeVideoPlayer
         title='SaveVideo player example'
         textColor={theme.textColor}
@@ -40,7 +40,7 @@ export default function App() {
         onError={handleError}
         onEnterFullscreen={onEnterFullscreen}
         onExitFullscreen={onExitFullscreen}
-        style={[styles.player, fullscreen && { height: '100%' }]}
+        containerStyle={[styles.player, fullscreen && styles.fullscreen]}
         source={{ uri: 'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8' }}
       />
       <View style={styles.darkMode}>
@@ -58,6 +58,11 @@ const styles = StyleSheet.create({
   player: { 
     width: '100%', 
     height: Dimensions.get('window').width / 1.77
+  },
+  fullscreen: {
+    position: 'absolute',
+    zIndex: 999,
+    height: '100%'
   },
   darkMode: {
     flexDirection: 'row',

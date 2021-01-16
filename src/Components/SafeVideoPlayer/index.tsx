@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Animated, Image, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
@@ -20,7 +20,7 @@ interface SafeVideoPlayerProps {
   backgroundColor?: string;
   onEnterFullscreen?: () => void;
   onExitFullscreen?: () => void;
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -144,13 +144,14 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   };
 
   return (
-    <View style={containerStyle} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+    <View style={[containerStyle, { backgroundColor }]} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <Video
         ref={videoRef}
         paused={!playing}
         rate={rate}
         onLoad={onLoad}
         onProgress={onProgress}
+        style={styles.player}
         {...videoProps}
       />
       <Animated.View style={[styles.controls, { opacity: fadeAnim }]} pointerEvents={controlsEnabled ? 'auto' : 'none'}>
@@ -240,6 +241,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  player: {
+    flex: 1
   },
   playPauseIcon: {
     width: 50,
