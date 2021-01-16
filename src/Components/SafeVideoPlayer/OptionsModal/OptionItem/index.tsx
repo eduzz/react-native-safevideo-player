@@ -1,6 +1,5 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ANIMATION_DURATION } from '..';
 
 interface IProps {
   title: string;
@@ -13,7 +12,7 @@ const OptionItem = ({ title, iconImage, color, onPress }: IProps) => {
   const handlePress = () => {
     setTimeout(() => {
       onPress && onPress();
-    }, ANIMATION_DURATION + 300);
+    }, 300);
   };
 
   return (
