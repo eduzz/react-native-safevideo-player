@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dimensions, SafeAreaView, StatusBar, StyleSheet, Switch, Text, View } from 'react-native';
+import { Dimensions, SafeAreaView, StyleSheet, Switch, Text, View } from 'react-native';
 import SafeVideoPlayer, { LoadError } from 'react-native-safevideo-player';
 
 export default function App() {

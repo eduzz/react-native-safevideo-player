@@ -21,6 +21,7 @@ interface SafeVideoPlayerProps {
   onEnterFullscreen?: () => void;
   onExitFullscreen?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
+  controlsStyle?: StyleProp<ViewStyle>;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -38,7 +39,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, ...videoProps } = props;
 
   const play = () => {
     setPlaying(true);
@@ -156,33 +157,35 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
       />
       <Animated.View style={[styles.controls, { opacity: fadeAnim }]} pointerEvents={controlsEnabled ? 'auto' : 'none'}>
         <View style={styles.backdrop} />
-        <View style={styles.header}>
-          <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
-          <View style={styles.headerActions}>
-            <TouchableOpacity onPress={showOptions}>
-              <Image style={styles.optionsIcon} source={optionsImage} />
+        <View style={[{ flex: 1 }, controlsStyle]}>
+          <View style={styles.header}>
+            <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
+            <View style={styles.headerActions}>
+              <TouchableOpacity onPress={showOptions}>
+                <Image style={styles.optionsIcon} source={optionsImage} />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.body}>
+            <TouchableOpacity onPress={playing ? pause : play}>
+              <Image style={styles.playPauseIcon} source={playing ? pauseImage : playImage} />
             </TouchableOpacity>
           </View>
-        </View>
-        <View style={styles.body}>
-          <TouchableOpacity onPress={playing ? pause : play}>
-            <Image style={styles.playPauseIcon} source={playing ? pauseImage : playImage} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.footer}>
-          <View style={styles.footerActions}>
-            <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
-            <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
-              <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
-            </TouchableOpacity>
+          <View style={styles.footer}>
+            <View style={styles.footerActions}>
+              <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
+              <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
+                <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
+              </TouchableOpacity>
+            </View>
+            <ProgressBar 
+              currentTime={videoInfo.currentTime} 
+              duration={videoInfo.duration} 
+              progressBarColor={progressBarColor}
+              onTouchStart={onProgressTouchStart}
+              onSeek={onSeek}
+            />
           </View>
-          <ProgressBar 
-            currentTime={videoInfo.currentTime} 
-            duration={videoInfo.duration} 
-            progressBarColor={progressBarColor}
-            onTouchStart={onProgressTouchStart}
-            onSeek={onSeek}
-          />
         </View>
       </Animated.View>
       <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>

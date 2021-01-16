@@ -32,6 +32,7 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [onEnterFullscreen](#onEnterFullscreen)
 * [onExitFullscreen](#onExitFullscreen)
 * [containerStyle](#containerStyle)
+* [controlsStyle](#controlsStyle)
 * [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
 
 ### Event props
@@ -84,8 +85,20 @@ Callback executed when the player exit full screen
 
 Platforms: All
 
+#### style
+The style applied to the player view
+* **ViewStyle**
+
+Platforms: All
+
 #### containerStyle
 The style applied to the view that wraps the player and the controls
+* **ViewStyle**
+
+Platforms: All
+
+#### controlsStyle
+The style applied to the player controls view
 * **ViewStyle**
 
 Platforms: All
