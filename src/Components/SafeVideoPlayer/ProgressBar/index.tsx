@@ -37,7 +37,7 @@ const ProgressBar = ({ currentTime, duration, progressBarColor, onTouchStart, on
 
   return (
     <View style={styles.container} onTouchStart={_onTouchStart} onTouchMove={_onTouchMove} onTouchEnd={_onTouchEnd}>
-      <View style={styles.progressBar}>
+      <View style={styles.progressBar} onTouchStart={_onTouchStart}>
         <View style={[styles.progress, { backgroundColor: progressBarColor || '#FEC92D', width: `${progress}%` }]} onTouchStart={_onTouchStart}>
           <View style={[styles.dot, { backgroundColor: progressBarColor || '#FEC92D' }, dragging && styles.dotDragging]} onTouchStart={_onTouchStart} />
         </View>
