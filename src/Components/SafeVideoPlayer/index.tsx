@@ -148,6 +148,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     <View style={[containerStyle, { backgroundColor }]} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <Video
         ref={videoRef}
+        resizeMode='contain'
         paused={!playing}
         rate={rate}
         onLoad={onLoad}
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
-    paddingBottom: 16,
+    paddingBottom: 0,
     flex: 0,
     width: '100%'
   },

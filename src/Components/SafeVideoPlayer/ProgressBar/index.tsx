@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, GestureResponderEvent, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, GestureResponderEvent, StyleSheet, View } from 'react-native';
 
 interface IProps {
   currentTime: number;
@@ -36,11 +36,11 @@ const ProgressBar = ({ currentTime, duration, progressBarColor, onTouchStart, on
   };
 
   return (
-    <View style={styles.container} onTouchMove={_onTouchMove} onTouchEnd={_onTouchEnd}>
-      <View style={[styles.progress, { backgroundColor: progressBarColor || '#FEC92D', width: `${progress}%` }]}>
-        <TouchableWithoutFeedback onPressIn={_onTouchStart}>
-          <View style={[styles.dot, { backgroundColor: progressBarColor || '#FEC92D' }, dragging && styles.dotDragging]} />
-        </TouchableWithoutFeedback>
+    <View style={styles.container} onTouchStart={_onTouchStart} onTouchMove={_onTouchMove} onTouchEnd={_onTouchEnd}>
+      <View style={styles.progressBar}>
+        <View style={[styles.progress, { backgroundColor: progressBarColor || '#FEC92D', width: `${progress}%` }]} onTouchStart={_onTouchStart}>
+          <View style={[styles.dot, { backgroundColor: progressBarColor || '#FEC92D' }, dragging && styles.dotDragging]} onTouchStart={_onTouchStart} />
+        </View>
       </View>
     </View>
   );
@@ -49,8 +49,12 @@ const ProgressBar = ({ currentTime, duration, progressBarColor, onTouchStart, on
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    height: 30
+  },
+  progressBar: {
+    width: '100%',
     height: 5,
-    backgroundColor: '#424242'
+    backgroundColor: '#424242',
   },
   progress: {
     position: 'absolute',

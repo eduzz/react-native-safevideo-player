@@ -40,7 +40,7 @@ export default function App() {
         onError={handleError}
         onEnterFullscreen={onEnterFullscreen}
         onExitFullscreen={onExitFullscreen}
-        containerStyle={[styles.player, fullscreen && styles.fullscreen]}
+        containerStyle={[styles.playerContainer, fullscreen && styles.fullscreen]}
         source={{ uri: 'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8' }}
       />
       <View style={styles.darkMode}>
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  player: { 
+  playerContainer: { 
     width: '100%', 
     height: Dimensions.get('window').width / 1.77
   },
