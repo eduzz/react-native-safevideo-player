@@ -33,6 +33,8 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [onExitFullscreen](#onExitFullscreen)
 * [containerStyle](#containerStyle)
 * [controlsStyle](#controlsStyle)
+* [onSeekStart](#onSeekStart)
+* [onSeekEnd](#onSeekEnd)
 * [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
 
 ### Event props
@@ -100,6 +102,18 @@ Platforms: All
 #### controlsStyle
 The style applied to the player controls view
 * **ViewStyle**
+
+Platforms: All
+
+#### onSeekStart
+Callback executed when the user start the sliding or tap of the progressBar
+* **() => void**
+
+Platforms: All
+
+#### onSeekEnd
+Callback executed when the user end the sliding or tap of the progressBar
+* **() => void**
 
 Platforms: All
 

@@ -49,7 +49,8 @@ const ProgressBar = ({ currentTime, duration, progressBarColor, onTouchStart, on
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 50
+    height: 30,
+    backgroundColor: 'transparent'
   },
   progressBar: {
     width: '100%',

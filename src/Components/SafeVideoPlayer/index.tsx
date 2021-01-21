@@ -22,6 +22,8 @@ interface SafeVideoPlayerProps {
   onExitFullscreen?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
   controlsStyle?: StyleProp<ViewStyle>;
+  onSeekStart?: () => void;
+  onSeekEnd?: () => void;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -39,7 +41,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, ...videoProps } = props;
 
   const play = () => {
     setPlaying(true);
@@ -107,11 +109,13 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const onProgressTouchStart = () => {
     clearTimeout(timeoutId);
     setPlaying(false);
+    onSeekStart && onSeekStart();
   };
 
   const onSeek = (seekTo: number) => {
     videoRef.current.seek(seekTo);
     setPlaying(true);
+    onSeekEnd && onSeekEnd();
   };
 
   const showOptions = () => {
