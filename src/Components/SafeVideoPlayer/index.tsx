@@ -259,7 +259,6 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
-    paddingBottom: 0,
     flex: 0,
     width: '100%'
   },
