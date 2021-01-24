@@ -26,17 +26,24 @@ interface SafeVideoPlayerProps {
   onSeekEnd?: () => void;
 }
 
+interface IVideoQuality {
+  type: "auto" | "disabled" | "resolution" | "index";
+  value?: string | number | undefined;
+}
+
 const CONTROLS_DISPLAY_TIME = 4000;
 
 const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(false);
   const [rate, setRate] = useState(1);
+  const [quality, setQuality] = useState<IVideoQuality>({ type: "auto", value: undefined });
   const [timeoutId, setTimeoutId] = useState<any>();
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
   const [fullscreen, setFullscreen] = useState(false);
   const [controlsEnabled, setControlsEnabled] = useState(true);
   const [showingSettings, setShowingSettings] = useState(false);
   const [showingSpeedOptions, setShowingSpeedOptions] = useState(false);
+  const [showingQualityOptions, setShowingQualityOptions] = useState(false);
 
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -53,6 +60,19 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
 
   const setVideoRate = (_rate: number) => () => {
     setRate(_rate);
+  };
+
+  const setVideoQuality = (_quality: number | 'auto') => () => {
+    if(_quality === 'auto') {
+      setQuality({
+        type: 'auto'
+      });
+    } else {
+      setQuality({
+        type: 'resolution',
+        value: _quality
+      });
+    }
   };
 
   const enterFullscreen = () => {
@@ -135,6 +155,15 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     setShowingSpeedOptions(false);
   };
 
+  const showQualityOptions = () => {
+    hideOptions();
+    setShowingQualityOptions(true);
+  };
+
+  const hideQualityOptions = () => {
+    setShowingQualityOptions(false);
+  };
+
   const formatTime = (seconds: number) => {
     const date = new Date(0);
 
@@ -157,6 +186,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         rate={rate}
         onLoad={onLoad}
         onProgress={onProgress}
+        selectedVideoTrack={quality}
         style={styles.player}
         {...videoProps}
       />
@@ -194,7 +224,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         </View>
       </Animated.View>
       <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
-        <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} />
+        <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />
         <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />
       </OptionsModal>
       <OptionsModal visible={showingSpeedOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideSpeedOptions}>
@@ -206,6 +236,13 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         <OptionItem title='1.5x' onPress={setVideoRate(1.5)} iconImage={rate === 1.5 && checkImage} color={textColor} />
         <OptionItem title='1.75x' onPress={setVideoRate(1.75)} iconImage={rate === 1.75 && checkImage} color={textColor} />
         <OptionItem title='2x' onPress={setVideoRate(2)} iconImage={rate === 2 && checkImage} color={textColor} />
+      </OptionsModal>
+      <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
+        <OptionItem title='auto' onPress={setVideoQuality('auto')} iconImage={quality.type === 'auto' && checkImage} color={textColor} />
+        <OptionItem title='240p' onPress={setVideoQuality(240)} iconImage={quality.value === 240 && checkImage} color={textColor} />
+        <OptionItem title='360p' onPress={setVideoQuality(360)} iconImage={quality.value === 360 && checkImage} color={textColor} />
+        <OptionItem title='480p' onPress={setVideoQuality(480)} iconImage={quality.value === 480 && checkImage} color={textColor} />
+        <OptionItem title='720p' onPress={setVideoQuality(720)} iconImage={quality.value === 720 && checkImage} color={textColor} />
       </OptionsModal>
     </View>
   );
