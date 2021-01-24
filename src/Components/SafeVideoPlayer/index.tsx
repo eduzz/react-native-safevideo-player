@@ -239,10 +239,10 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
       </OptionsModal>
       <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
         <OptionItem title='auto' onPress={setVideoQuality('auto')} iconImage={quality.type === 'auto' && checkImage} color={textColor} />
-        <OptionItem title='240p' onPress={setVideoQuality(240)} iconImage={quality.value === 240 && checkImage} color={textColor} />
-        <OptionItem title='360p' onPress={setVideoQuality(360)} iconImage={quality.value === 360 && checkImage} color={textColor} />
-        <OptionItem title='480p' onPress={setVideoQuality(480)} iconImage={quality.value === 480 && checkImage} color={textColor} />
         <OptionItem title='720p' onPress={setVideoQuality(720)} iconImage={quality.value === 720 && checkImage} color={textColor} />
+        <OptionItem title='480p' onPress={setVideoQuality(480)} iconImage={quality.value === 480 && checkImage} color={textColor} />
+        <OptionItem title='360p' onPress={setVideoQuality(360)} iconImage={quality.value === 360 && checkImage} color={textColor} />
+        <OptionItem title='240p' onPress={setVideoQuality(240)} iconImage={quality.value === 240 && checkImage} color={textColor} />
       </OptionsModal>
     </View>
   );
