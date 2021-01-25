@@ -62,17 +62,17 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     setRate(_rate);
   };
 
-  const setVideoQuality = (_quality: number | 'auto') => () => {
-    if(_quality === 'auto') {
-      setQuality({
-        type: 'auto'
-      });
-    } else {
-      setQuality({
-        type: 'resolution',
-        value: _quality
-      });
-    }
+  const setVideoQualityToAuto = () => {
+    setQuality({
+      type: 'auto'
+    });
+  };
+
+  const setVideoQualityByIndex = (_index: number) => () => {
+    setQuality({
+      type: 'index',
+      value: _index
+    });
   };
 
   const enterFullscreen = () => {
@@ -238,11 +238,11 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         <OptionItem title='2x' onPress={setVideoRate(2)} iconImage={rate === 2 && checkImage} color={textColor} />
       </OptionsModal>
       <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
-        <OptionItem title='auto' onPress={setVideoQuality('auto')} iconImage={quality.type === 'auto' && checkImage} color={textColor} />
-        <OptionItem title='720p' onPress={setVideoQuality(720)} iconImage={quality.value === 720 && checkImage} color={textColor} />
-        <OptionItem title='480p' onPress={setVideoQuality(480)} iconImage={quality.value === 480 && checkImage} color={textColor} />
-        <OptionItem title='360p' onPress={setVideoQuality(360)} iconImage={quality.value === 360 && checkImage} color={textColor} />
-        <OptionItem title='240p' onPress={setVideoQuality(240)} iconImage={quality.value === 240 && checkImage} color={textColor} />
+        <OptionItem title='auto' onPress={setVideoQualityToAuto} iconImage={quality.type === 'auto' && checkImage} color={textColor} />
+        <OptionItem title='720p' onPress={setVideoQualityByIndex(0)} iconImage={quality.value === 0 && checkImage} color={textColor} />
+        <OptionItem title='480p' onPress={setVideoQualityByIndex(1)} iconImage={quality.value === 1 && checkImage} color={textColor} />
+        <OptionItem title='360p' onPress={setVideoQualityByIndex(2)} iconImage={quality.value === 2 && checkImage} color={textColor} />
+        <OptionItem title='240p' onPress={setVideoQualityByIndex(3)} iconImage={quality.value === 3 && checkImage} color={textColor} />
       </OptionsModal>
     </View>
   );
