@@ -12,14 +12,6 @@ import checkImage from '../../Assets/check.png';
 import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
-import { SourceMap } from 'module';
-
-interface ISource {
-  uri: string;
-  headers?: {
-    [key: string]: string;
-  }
-}
 
 interface SafeVideoPlayerProps {
   title?: string;
