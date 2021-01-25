@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
@@ -12,6 +12,14 @@ import checkImage from '../../Assets/check.png';
 import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
+import { SourceMap } from 'module';
+
+interface ISource {
+  uri: string;
+  headers?: {
+    [key: string]: string;
+  }
+}
 
 interface SafeVideoPlayerProps {
   title?: string;
@@ -24,11 +32,7 @@ interface SafeVideoPlayerProps {
   controlsStyle?: StyleProp<ViewStyle>;
   onSeekStart?: () => void;
   onSeekEnd?: () => void;
-}
-
-interface IVideoQuality {
-  type: "auto" | "disabled" | "resolution" | "index";
-  value?: string | number | undefined;
+  source?: any;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -36,19 +40,32 @@ const CONTROLS_DISPLAY_TIME = 4000;
 const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(false);
   const [rate, setRate] = useState(1);
-  const [quality, setQuality] = useState<IVideoQuality>({ type: "auto", value: undefined });
   const [timeoutId, setTimeoutId] = useState<any>();
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
+  const [quality, setQuality] = useState<number | 'auto'>('auto');
   const [fullscreen, setFullscreen] = useState(false);
   const [controlsEnabled, setControlsEnabled] = useState(true);
   const [showingSettings, setShowingSettings] = useState(false);
   const [showingSpeedOptions, setShowingSpeedOptions] = useState(false);
   const [showingQualityOptions, setShowingQualityOptions] = useState(false);
+  const [qualities, setQualities] = useState<string[]>([]);
 
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, ...videoProps } = props;
+
+  const [_uri, setUri] = useState(source.uri);
+
+  useEffect(() => {
+    fetch(source.uri).then(
+      response => response.text()
+    ).then(
+      playList => {
+        setQualities(playList.split('\n').filter(line => line.includes('http')))
+      }
+    );
+  }, []);
 
   const play = () => {
     setPlaying(true);
@@ -62,17 +79,9 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     setRate(_rate);
   };
 
-  const setVideoQualityToAuto = () => {
-    setQuality({
-      type: 'auto'
-    });
-  };
-
-  const setVideoQualityByIndex = (_index: number) => () => {
-    setQuality({
-      type: 'index',
-      value: _index
-    });
+  const setVideoQuality = (_quality: number | 'auto') => () => {
+    setQuality(_quality);
+    setUri( _quality === 'auto' ? source.uri : qualities[_quality]);
   };
 
   const enterFullscreen = () => {
@@ -181,12 +190,16 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     <View style={[containerStyle, { backgroundColor }]} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       <Video
         ref={videoRef}
+        source={{
+          type: 'm3u8',
+          ...source,
+          uri: _uri
+        } as any}
         resizeMode='contain'
         paused={!playing}
         rate={rate}
         onLoad={onLoad}
         onProgress={onProgress}
-        selectedVideoTrack={quality}
         style={styles.player}
         {...videoProps}
       />
@@ -238,11 +251,11 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         <OptionItem title='2x' onPress={setVideoRate(2)} iconImage={rate === 2 && checkImage} color={textColor} />
       </OptionsModal>
       <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
-        <OptionItem title='auto' onPress={setVideoQualityToAuto} iconImage={quality.type === 'auto' && checkImage} color={textColor} />
-        <OptionItem title='720p' onPress={setVideoQualityByIndex(0)} iconImage={quality.value === 0 && checkImage} color={textColor} />
-        <OptionItem title='480p' onPress={setVideoQualityByIndex(1)} iconImage={quality.value === 1 && checkImage} color={textColor} />
-        <OptionItem title='360p' onPress={setVideoQualityByIndex(2)} iconImage={quality.value === 2 && checkImage} color={textColor} />
-        <OptionItem title='240p' onPress={setVideoQualityByIndex(3)} iconImage={quality.value === 3 && checkImage} color={textColor} />
+        <OptionItem title='auto' onPress={setVideoQuality('auto')} iconImage={quality === 'auto' && checkImage} color={textColor} />
+        <OptionItem title='720p' onPress={setVideoQuality(3)} iconImage={quality === 3 && checkImage} color={textColor} />
+        <OptionItem title='480p' onPress={setVideoQuality(2)} iconImage={quality === 2 && checkImage} color={textColor} />
+        <OptionItem title='360p' onPress={setVideoQuality(1)} iconImage={quality === 1 && checkImage} color={textColor} />
+        <OptionItem title='240p' onPress={setVideoQuality(0)} iconImage={quality === 0 && checkImage} color={textColor} />
       </OptionsModal>
     </View>
   );

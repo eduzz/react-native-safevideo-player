@@ -41,7 +41,7 @@ export default function App() {
         onEnterFullscreen={onEnterFullscreen}
         onExitFullscreen={onExitFullscreen}
         containerStyle={[styles.playerContainer, fullscreen && styles.fullscreen]}
-        source={{ uri: 'https://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8' }}
+        source={{ uri: 'https://gw.safevideo.com/playlist?p=l%2B%2Bolmfwzx10zvTiD9j6TGxHlU5nyeRXX6iG4mWM9HGRMyfqx3WQkfQYp30QAXuyiYDIekzVf5t7sPtXyiPhwywhSOUIE3n0hG2bfTKyQ94ongW1GnZRNsNpXfKg8OKj2uuw8eUcMS6XHu%2FyzJxmsi2vq3EQaL73W3rQe4xkoX7LWOfqMrjm7Pn43LyJDWxX1JgjTj87ovWrTrg%3D&.m3u8' }}
       />
       <View style={styles.darkMode}>
         <Switch value={darkModeActive} onValueChange={toggleDarkMode} />
