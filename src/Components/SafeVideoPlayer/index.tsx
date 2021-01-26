@@ -14,6 +14,11 @@ import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
 import Loading from './Loading';
 
+interface ISource {
+  uri: string;
+  quality: number | 'auto';
+}
+
 interface SafeVideoPlayerProps {
   title?: string;
   progressBarColor?: string;
@@ -36,27 +41,42 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [loading, setLoading] = useState(true);
   const [timeoutId, setTimeoutId] = useState<any>();
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
-  const [quality, setQuality] = useState<number | 'auto'>('auto');
   const [fullscreen, setFullscreen] = useState(false);
   const [controlsEnabled, setControlsEnabled] = useState(true);
   const [showingSettings, setShowingSettings] = useState(false);
   const [showingSpeedOptions, setShowingSpeedOptions] = useState(false);
   const [showingQualityOptions, setShowingQualityOptions] = useState(false);
-  const [qualities, setQualities] = useState<string[]>([]);
+  const [qualitySources, setQualitySources] = useState<ISource[]>([]);
 
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, ...videoProps } = props;
 
-  const [_uri, setUri] = useState(source.uri);
+  const [_source, setSource] = useState<ISource>({
+    uri: source.uri,
+    quality: 'auto'
+  });
 
   useEffect(() => {
     fetch(source.uri).then(
       response => response.text()
     ).then(
       playList => {
-        setQualities(playList.split('\n').filter(line => line.includes('http')))
+        const lines = playList.split('\n').slice(2);
+        const resolutions = lines.filter((line, index) => index % 2 == 0 && line).map(quality => quality.slice(quality.indexOf('RESOLUTION=') + 11));
+        const uris = lines.filter((_, index) => index % 2 != 0);
+
+        setQualitySources([
+          {
+            uri: source.uri,
+            quality: 'auto'
+          },
+          ...resolutions.map((resolution, index) => ({
+            uri: uris[index],
+            quality: parseInt(resolution.slice(resolution.indexOf('x') + 1))
+          })).sort((a, b) => b.quality - a.quality)
+        ]);
       }
     );
   }, []);
@@ -73,10 +93,13 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     setRate(_rate);
   };
 
-  const setVideoQuality = (_quality: number | 'auto') => () => {
-    setQuality(_quality);
-    setUri( _quality === 'auto' ? source.uri : qualities[_quality]);
-    videoRef.current.seek(videoInfo.currentTime);
+  const setVideoQuality = (quality: number | 'auto') => () => {
+    const qualitySource = qualitySources.find(qualitySource => qualitySource.quality === quality);
+    
+    if(qualitySource) {
+      setSource(qualitySource);
+      videoRef.current.seek(videoInfo.currentTime);
+    }
   };
 
   const enterFullscreen = () => {
@@ -193,7 +216,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         source={{
           type: 'm3u8',
           ...source,
-          uri: _uri
+          uri: _source.uri
         } as any}
         resizeMode='contain'
         paused={!playing}
@@ -256,11 +279,15 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         <OptionItem title='2x' onPress={setVideoRate(2)} iconImage={rate === 2 && checkImage} color={textColor} />
       </OptionsModal>
       <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
-        <OptionItem title='auto' onPress={setVideoQuality('auto')} iconImage={quality === 'auto' && checkImage} color={textColor} />
-        <OptionItem title='720p' onPress={setVideoQuality(3)} iconImage={quality === 3 && checkImage} color={textColor} />
-        <OptionItem title='480p' onPress={setVideoQuality(2)} iconImage={quality === 2 && checkImage} color={textColor} />
-        <OptionItem title='360p' onPress={setVideoQuality(1)} iconImage={quality === 1 && checkImage} color={textColor} />
-        <OptionItem title='240p' onPress={setVideoQuality(0)} iconImage={quality === 0 && checkImage} color={textColor} />
+        {qualitySources.map((qualitySource, index) => 
+          <OptionItem
+            key={index}
+            title={qualitySource.quality === 'auto' ? qualitySource.quality : qualitySource.quality + 'p'} 
+            onPress={setVideoQuality(qualitySource.quality)} 
+            iconImage={_source.quality === qualitySource.quality && checkImage}
+            color={textColor} 
+          />
+        )}
       </OptionsModal>
     </View>
   );

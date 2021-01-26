@@ -41,7 +41,7 @@ export default function App() {
         onEnterFullscreen={onEnterFullscreen}
         onExitFullscreen={onExitFullscreen}
         containerStyle={[styles.playerContainer, fullscreen && styles.fullscreen]}
-        source={{ uri: 'https://gw.safevideo.com/playlist?p=l%2B%2Bolmfwzx10zvTiD9j6TGxHlU5nyeRXX6iG4mWM9HGRMyfqx3WQkfQYp30QAXuyiYDIekzVf5t7sPtXyiPhwywhSOUIE3n0hG2bfTKyQ94ongW1GnZRNsNpXfKg8OKj2uuw8eUcMS6XHu%2FyzJxmsi2vq3EQaL73W3rQe4xkoX7LWOfqMrjm7Pn43LyJDWxX1JgjTj87ovWrTrg%3D&.m3u8' }}
+        source={{ uri: 'http://website-videozz-archive.s3-website-us-east-1.amazonaws.com/7ddf8391-c449-4543-bbda-af41c09b0c3f/playlist.m3u8' }}
       />
       <View style={styles.darkMode}>
         <Switch value={darkModeActive} onValueChange={toggleDarkMode} />
