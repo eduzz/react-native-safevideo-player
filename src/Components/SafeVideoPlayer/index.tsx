@@ -12,6 +12,7 @@ import checkImage from '../../Assets/check.png';
 import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
+import Loading from './Loading';
 
 interface SafeVideoPlayerProps {
   title?: string;
@@ -32,6 +33,7 @@ const CONTROLS_DISPLAY_TIME = 4000;
 const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(false);
   const [rate, setRate] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [timeoutId, setTimeoutId] = useState<any>();
   const [videoInfo, setVideoInfo] = useState({ currentTime: 0, duration: 0 });
   const [quality, setQuality] = useState<number | 'auto'>('auto');
@@ -74,6 +76,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const setVideoQuality = (_quality: number | 'auto') => () => {
     setQuality(_quality);
     setUri( _quality === 'auto' ? source.uri : qualities[_quality]);
+    videoRef.current.seek(videoInfo.currentTime);
   };
 
   const enterFullscreen = () => {
@@ -113,11 +116,16 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
     setControlsEnabled(fadeIn);
   };
 
+  const onLoadStart = () => {
+    setLoading(true);
+  };
+
   const onLoad = (event: OnLoadData) => {
     setVideoInfo({
       currentTime: event.currentTime,
       duration: event.duration
     });
+    setLoading(false);
   };
   
   const onProgress = (data: OnProgressData) => {
@@ -190,6 +198,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         resizeMode='contain'
         paused={!playing}
         rate={rate}
+        onLoadStart={onLoadStart}
         onLoad={onLoad}
         onProgress={onProgress}
         style={styles.player}
@@ -207,9 +216,13 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
             </View>
           </View>
           <View style={styles.body}>
-            <TouchableOpacity onPress={playing ? pause : play}>
-              <Image style={styles.playPauseIcon} source={playing ? pauseImage : playImage} />
-            </TouchableOpacity>
+            {loading ?
+              <Loading />
+              :
+              <TouchableOpacity onPress={playing ? pause : play}>
+                <Image style={styles.playPauseIcon} source={playing ? pauseImage : playImage} />
+              </TouchableOpacity>
+            }
           </View>
           <View style={styles.footer}>
             <View style={styles.footerActions}>
@@ -290,7 +303,8 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingTop: 16
   },
   player: {
     flex: 1
