@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Animated, Easing, Image, StyleSheet } from 'react-native';
+import { Animated, Easing, StyleSheet } from 'react-native';
 import loadingImage from '../../../Assets/loading.png';
 
 const Loading = () => {
