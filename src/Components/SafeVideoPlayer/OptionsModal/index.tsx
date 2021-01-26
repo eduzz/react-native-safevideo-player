@@ -66,7 +66,7 @@ const OptionsModal = ({ visible, backgroundColor, textColor, onRequestClose, onF
         <Animated.View style={[styles.backdrop, { opacity }]} />
         <View style={styles.content}>
           <Animated.View style={[styles.options, { backgroundColor, bottom }]} onLayout={onLayout}>
-            <ScrollView>
+            <ScrollView style={{ maxHeight: Dimensions.get('window').height - 86 }}>
               {children}
             </ScrollView>
             <View style={[styles.divider, { backgroundColor: textColor }]} />
