@@ -19,8 +19,10 @@ const OptionItem = ({ title, iconImage, iconElement, color, onPress }: IProps) =
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.container}>
-        {iconElement}
-        {!!iconImage && <Image style={[styles.iconImage, { tintColor: color }]} source={iconImage || null} />}
+        <View style={styles.icon}>
+          {iconElement}
+        </View>
+        {!!iconImage && <Image style={[styles.icon, { tintColor: color }]} source={iconImage || null} />}
         <Text style={[styles.title, { color }]} numberOfLines={1}>{title}</Text>
       </View>
     </TouchableOpacity>
@@ -34,7 +36,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 18
   },
-  iconImage: {
+  icon: {
     flex: 0,
     width: 25,
     height: 25,
