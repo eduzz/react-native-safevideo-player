@@ -3,12 +3,13 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface IProps {
   title: string;
+  iconElement?: any;
   iconImage?: any;
   color?: string;
   onPress?: () => void;
 }
 
-const OptionItem = ({ title, iconImage, color, onPress }: IProps) => {
+const OptionItem = ({ title, iconImage, iconElement, color, onPress }: IProps) => {
   const handlePress = () => {
     setTimeout(() => {
       onPress && onPress();
@@ -18,7 +19,8 @@ const OptionItem = ({ title, iconImage, color, onPress }: IProps) => {
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.container}>
-        <Image style={[styles.iconImage, { tintColor: color }]} source={iconImage || null} />
+        {iconElement}
+        {!!iconImage && <Image style={[styles.iconImage, { tintColor: color }]} source={iconImage || null} />}
         <Text style={[styles.title, { color }]} numberOfLines={1}>{title}</Text>
       </View>
     </TouchableOpacity>
