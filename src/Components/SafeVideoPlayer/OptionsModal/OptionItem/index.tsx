@@ -1,16 +1,21 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { GestureResponderEvent, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface IProps {
   title: string;
   iconElement?: any;
   iconImage?: any;
   color?: string;
+  avoidClosing?: boolean;
   onPress?: () => void;
 }
 
-const OptionItem = ({ title, iconImage, iconElement, color, onPress }: IProps) => {
-  const handlePress = () => {
+const OptionItem = ({ title, iconImage, iconElement, color, avoidClosing, onPress }: IProps) => {
+  const handlePress = (event: GestureResponderEvent) => {
+    if(avoidClosing) {
+      event.stopPropagation();
+    }
+
     setTimeout(() => {
       onPress && onPress();
     }, 300);
