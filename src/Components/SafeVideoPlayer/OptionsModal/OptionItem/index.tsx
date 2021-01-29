@@ -19,9 +19,11 @@ const OptionItem = ({ title, iconImage, iconElement, color, onPress }: IProps) =
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.container}>
-        <View style={styles.icon}>
-          {iconElement}
-        </View>
+        {!!iconElement &&
+          <View style={styles.icon}>
+            {iconElement}
+          </View>
+        }
         {!!iconImage && <Image style={[styles.icon, { tintColor: color }]} source={iconImage || null} />}
         <Text style={[styles.title, { color }]} numberOfLines={1}>{title}</Text>
       </View>
