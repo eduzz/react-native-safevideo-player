@@ -119,9 +119,9 @@ Callback executed when the user end the sliding or tap of the progressBar
 
 Platforms: All
 
-#### menuOptions
+#### menuOption
 The options that will be add to the player's menu
-* **ReactNode[]**
+* **any | any[]**
 
 Platforms: All
 

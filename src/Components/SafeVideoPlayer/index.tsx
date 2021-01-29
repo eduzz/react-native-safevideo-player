@@ -1,4 +1,4 @@
-import React, { ReactChildren, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { cloneElement, ReactChildren, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
@@ -31,7 +31,7 @@ interface SafeVideoPlayerProps {
   onSeekStart?: () => void;
   onSeekEnd?: () => void;
   source?: any;
-  menuOptions?: ReactNode[];
+  menuOption?: any | any[];
   children?: ReactChildren;
 }
 
@@ -53,7 +53,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOptions, children, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, children, ...videoProps } = props;
 
   const [_source, setSource] = useState<ISource>({
     uri: source.uri,
@@ -267,7 +267,9 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         </View>
       </Animated.View>
       <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
-        {(menuOptions || []).map(option => option)}
+        {!!menuOption &&
+          ([...(menuOption?.length ? menuOption : [menuOption])]).map((option, index) => cloneElement(option, { key: index }))
+        }
         <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />
         <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />
       </OptionsModal>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, Switch, Text, View } from 'react-native';
-import SafeVideoPlayer, { LoadError, OptionItem } from 'react-native-safevideo-player';
+import SafeVideoPlayer, { LoadError } from 'react-native-safevideo-player';
 
 export default function App() {
   const [fullscreen, setFullscreen] = React.useState(false);
