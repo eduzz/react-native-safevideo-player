@@ -1,4 +1,4 @@
-import React, { cloneElement, ReactChildren, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { cloneElement, ReactChildren, useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
