@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ReactChildren, useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
@@ -31,6 +31,7 @@ interface SafeVideoPlayerProps {
   onSeekStart?: () => void;
   onSeekEnd?: () => void;
   source?: any;
+  children?: ReactChildren;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -51,7 +52,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, children, ...videoProps } = props;
 
   const [_source, setSource] = useState<ISource>({
     uri: source.uri,
@@ -264,6 +265,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           </View>
         </View>
       </Animated.View>
+      {children}
       <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
         <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />
         <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />

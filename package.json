@@ -1,6 +1,6 @@
 {
   "name": "react-native-safevideo-player",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "SafeVideo video player for react native apps",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
