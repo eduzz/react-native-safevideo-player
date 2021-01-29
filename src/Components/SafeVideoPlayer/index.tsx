@@ -1,4 +1,4 @@
-import React, { ReactChildren, useEffect, useRef, useState } from 'react';
+import React, { ReactChildren, ReactNode, useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
@@ -31,6 +31,7 @@ interface SafeVideoPlayerProps {
   onSeekStart?: () => void;
   onSeekEnd?: () => void;
   source?: any;
+  menuOptions?: ReactNode[];
   children?: ReactChildren;
 }
 
@@ -52,7 +53,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, children, ...videoProps } = props;
+  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOptions, children, ...videoProps } = props;
 
   const [_source, setSource] = useState<ISource>({
     uri: source.uri,
@@ -265,8 +266,10 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           </View>
         </View>
       </Animated.View>
-      {children}
       <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
+        {menuOptions &&
+          {...menuOptions}
+        }
         <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />
         <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />
       </OptionsModal>
@@ -291,6 +294,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           />
         )}
       </OptionsModal>
+      {children}
     </View>
   );
 };

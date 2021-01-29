@@ -35,6 +35,8 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [controlsStyle](#controlsStyle)
 * [onSeekStart](#onSeekStart)
 * [onSeekEnd](#onSeekEnd)
+* [menuOption](#menuOption)
+* [children](#children)
 * [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
 
 ### Event props
@@ -114,6 +116,18 @@ Platforms: All
 #### onSeekEnd
 Callback executed when the user end the sliding or tap of the progressBar
 * **() => void**
+
+Platforms: All
+
+#### menuOptions
+The options that will be add to the player's menu
+* **ReactNode[]**
+
+Platforms: All
+
+#### children
+Elements that will be added along the current OptionModals in the player's menu
+* **ReactChildren**
 
 Platforms: All
 
