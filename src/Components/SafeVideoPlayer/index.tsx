@@ -267,9 +267,7 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
         </View>
       </Animated.View>
       <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
-        {menuOptions &&
-          {...menuOptions}
-        }
+        {(menuOptions || []).map(option => option)}
         <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />
         <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />
       </OptionsModal>
