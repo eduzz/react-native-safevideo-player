@@ -8,6 +8,7 @@ import exitFullscreenImage from '../../Assets/exit-fullscreen.png';
 import qualityImage from '../../Assets/quality.png';
 import videoSpeedImage from '../../Assets/video-speed.png';
 import optionsImage from '../../Assets/options.png';
+import closeImage from '../../Assets/close.png';
 import checkImage from '../../Assets/check.png';
 import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
@@ -35,13 +36,15 @@ interface SafeVideoPlayerProps {
   source?: any;
   menuOption?: any | any[];
   disableFullscreen?: boolean;
+  disableCloseButton?: boolean;
+  onRequestClose?: () => void;
   disableOptions?: boolean | IOption[];
   playOnStart?: boolean;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
-const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, playOnStart, disableFullscreen, disableOptions, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
+const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
   const [rate, setRate] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -236,6 +239,11 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
         <View style={styles.backdrop} />
         <View style={[{ flex: 1 }, controlsStyle]}>
           <View style={styles.header}>
+            {!disableCloseButton &&
+              <TouchableOpacity onPress={onRequestClose}>
+                <Image style={styles.closeIcon} source={closeImage} />
+              </TouchableOpacity>
+            }
             <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
             <View style={styles.headerActions}>
               {(!disableOptions || typeof _disableOptions !== 'boolean') &&
@@ -342,6 +350,11 @@ const styles = StyleSheet.create({
   headerActions: {
     flex: 0,
     paddingLeft: 8
+  },
+  closeIcon: {
+    width: 15,
+    height: 15,
+    marginRight: 16
   },
   optionsIcon: {
     width: 20,

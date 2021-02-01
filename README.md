@@ -139,15 +139,21 @@ Can be a boolean to disable all the options and hide the player's options button
 
 Platforms: All
 
-#### playOnStart
-Tells the player to start playing when the video has loaded
-* **any | any[]**
+Platforms: All
+#### disableCloseButton
+Hide the player's close button
+* **boolean**
 
 Platforms: All
 
-#### children
-Elements that will be added along the current OptionModals in the player's menu
-* **ReactChildren**
+#### onRequestClose
+Callback executed when the close button is click by the user
+* **() => void**
+
+
+#### playOnStart
+Tells the player to start playing when the video has loaded
+* **any | any[]**
 
 Platforms: All
 
