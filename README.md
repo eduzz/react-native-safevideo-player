@@ -36,7 +36,9 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [onSeekStart](#onSeekStart)
 * [onSeekEnd](#onSeekEnd)
 * [menuOption](#menuOption)
-* [children](#children)
+* [disableFullscreen](#disableFullscreen)
+* [disableOptions](#disableOptions)
+* [playOnStart](#playOnStart)
 * [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
 
 ### Event props
@@ -121,6 +123,24 @@ Platforms: All
 
 #### menuOption
 The options that will be add to the player's menu
+* **any | any[]**
+
+Platforms: All
+
+#### disableFullscreen
+Hide the player's fullscreen button
+* **boolean**
+
+Platforms: All
+
+#### disableOptions
+Can be a boolean to disable all the options and hide the player's options button or an string array with the options to be disabled
+* **boolean | [<quality> | <rate>]**
+
+Platforms: All
+
+#### playOnStart
+Tells the player to start playing when the video has loaded
 * **any | any[]**
 
 Platforms: All

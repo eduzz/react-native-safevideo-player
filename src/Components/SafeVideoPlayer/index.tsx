@@ -1,4 +1,4 @@
-import React, { cloneElement, ReactChildren, useEffect, useRef, useState } from 'react';
+import React, { cloneElement, useEffect, useRef, useState } from 'react';
 import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
@@ -19,6 +19,8 @@ interface ISource {
   quality: number | 'auto';
 }
 
+type IOption = 'quality' | 'rate';
+
 interface SafeVideoPlayerProps {
   title?: string;
   progressBarColor?: string;
@@ -32,13 +34,15 @@ interface SafeVideoPlayerProps {
   onSeekEnd?: () => void;
   source?: any;
   menuOption?: any | any[];
-  children?: ReactChildren;
+  disableFullscreen?: boolean;
+  disableOptions?: boolean | IOption[];
+  playOnStart?: boolean;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
-const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
-  const [playing, setPlaying] = useState(false);
+const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, playOnStart, disableFullscreen, disableOptions, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
+  const [playing, setPlaying] = useState(playOnStart || false);
   const [rate, setRate] = useState(1);
   const [loading, setLoading] = useState(true);
   const [timeoutId, setTimeoutId] = useState<any>();
@@ -49,11 +53,10 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
   const [showingSpeedOptions, setShowingSpeedOptions] = useState(false);
   const [showingQualityOptions, setShowingQualityOptions] = useState(false);
   const [qualitySources, setQualitySources] = useState<ISource[]>([]);
+  const [_disableOptions] = useState(Array.isArray(disableOptions) ? disableOptions.reduce((previousValue, currentValue) => ({ ...previousValue, [currentValue]: true }), {} as any) : disableOptions);
 
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
-
-  const { title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, children, ...videoProps } = props;
 
   const [_source, setSource] = useState<ISource>({
     uri: source.uri,
@@ -235,9 +238,11 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           <View style={styles.header}>
             <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
             <View style={styles.headerActions}>
-              <TouchableOpacity onPress={showOptions}>
-                <Image style={styles.optionsIcon} source={optionsImage} />
-              </TouchableOpacity>
+              {(!disableOptions || typeof _disableOptions !== 'boolean') &&
+                <TouchableOpacity onPress={showOptions}>
+                  <Image style={styles.optionsIcon} source={optionsImage} />
+                </TouchableOpacity>
+              }
             </View>
           </View>
           <View style={styles.body}>
@@ -252,9 +257,11 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           <View style={styles.footer}>
             <View style={styles.footerActions}>
               <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
-              <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
-                <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
-              </TouchableOpacity>
+              {!disableFullscreen &&
+                <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
+                  <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
+                </TouchableOpacity>
+              }
             </View>
             <ProgressBar 
               currentTime={videoInfo.currentTime} 
@@ -266,35 +273,42 @@ const SafeVideoPlayer = (props: VideoProperties & SafeVideoPlayerProps) => {
           </View>
         </View>
       </Animated.View>
-      <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
-        {!!menuOption &&
-          ([...(menuOption?.length ? menuOption : [menuOption])]).map((option, index) => cloneElement(option, { key: index }))
-        }
-        <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />
-        <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />
-      </OptionsModal>
-      <OptionsModal visible={showingSpeedOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideSpeedOptions}>
-        <OptionItem title='0.25x' onPress={setVideoRate(0.25)} iconImage={rate === 0.25 && checkImage} color={textColor} />
-        <OptionItem title='0.5x' onPress={setVideoRate(0.5)} iconImage={rate === 0.5 && checkImage} color={textColor} />
-        <OptionItem title='0.75x' onPress={setVideoRate(0.75)} iconImage={rate === 0.75 && checkImage} color={textColor} />
-        <OptionItem title='Normal' onPress={setVideoRate(1)} iconImage={rate === 1 && checkImage} color={textColor} />
-        <OptionItem title='1.25x' onPress={setVideoRate(1.25)} iconImage={rate === 1.25 && checkImage} color={textColor} />
-        <OptionItem title='1.5x' onPress={setVideoRate(1.5)} iconImage={rate === 1.5 && checkImage} color={textColor} />
-        <OptionItem title='1.75x' onPress={setVideoRate(1.75)} iconImage={rate === 1.75 && checkImage} color={textColor} />
-        <OptionItem title='2x' onPress={setVideoRate(2)} iconImage={rate === 2 && checkImage} color={textColor} />
-      </OptionsModal>
-      <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
-        {qualitySources.map((qualitySource, index) => 
-          <OptionItem
-            key={index}
-            title={qualitySource.quality === 'auto' ? qualitySource.quality : qualitySource.quality + 'p'} 
-            onPress={setVideoQuality(qualitySource.quality)} 
-            iconImage={_source.quality === qualitySource.quality && checkImage}
-            color={textColor} 
-          />
-        )}
-      </OptionsModal>
-      {children}
+      {(!disableOptions || typeof _disableOptions !== 'boolean') &&
+        <>
+          <OptionsModal visible={showingSettings} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideOptions}>
+            {!!menuOption &&
+              ([...(menuOption?.length ? menuOption : [menuOption])]).map((option, index) => cloneElement(option, { key: index }))
+            }
+            {!_disableOptions?.quality && <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />}
+            {!_disableOptions?.rate && <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />}
+          </OptionsModal>
+          {!_disableOptions?.quality &&
+            <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
+              {qualitySources.map((qualitySource, index) => 
+                <OptionItem
+                key={index}
+                title={qualitySource.quality === 'auto' ? qualitySource.quality : qualitySource.quality + 'p'} 
+                onPress={setVideoQuality(qualitySource.quality)} 
+                iconImage={_source.quality === qualitySource.quality && checkImage}
+                color={textColor} 
+                />
+                )}
+            </OptionsModal>
+          }
+          {!_disableOptions?.rate &&
+            <OptionsModal visible={showingSpeedOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideSpeedOptions}>
+              <OptionItem title='0.25x' onPress={setVideoRate(0.25)} iconImage={rate === 0.25 && checkImage} color={textColor} />
+              <OptionItem title='0.5x' onPress={setVideoRate(0.5)} iconImage={rate === 0.5 && checkImage} color={textColor} />
+              <OptionItem title='0.75x' onPress={setVideoRate(0.75)} iconImage={rate === 0.75 && checkImage} color={textColor} />
+              <OptionItem title='Normal' onPress={setVideoRate(1)} iconImage={rate === 1 && checkImage} color={textColor} />
+              <OptionItem title='1.25x' onPress={setVideoRate(1.25)} iconImage={rate === 1.25 && checkImage} color={textColor} />
+              <OptionItem title='1.5x' onPress={setVideoRate(1.5)} iconImage={rate === 1.5 && checkImage} color={textColor} />
+              <OptionItem title='1.75x' onPress={setVideoRate(1.75)} iconImage={rate === 1.75 && checkImage} color={textColor} />
+              <OptionItem title='2x' onPress={setVideoRate(2)} iconImage={rate === 2 && checkImage} color={textColor} />
+            </OptionsModal>
+          }
+        </>
+      }
     </View>
   );
 };
