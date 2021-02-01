@@ -7,29 +7,31 @@ interface IProps {
   iconImage?: any;
   color?: string;
   avoidClosing?: boolean;
-  onPress?: () => void;
+  onPress?: ((event: GestureResponderEvent) => void) | (() => void);
 }
 
 const OptionItem = ({ title, iconImage, iconElement, color, avoidClosing, onPress }: IProps) => {
-  const handlePress = (event: GestureResponderEvent) => {
+  const onTouchEnd = (event: GestureResponderEvent) => {
     if(avoidClosing) {
       event.stopPropagation();
+      onPress && onPress(event);
+      return;
     }
-
+    
     setTimeout(() => {
-      onPress && onPress();
+      onPress && onPress(event);
     }, 300);
   };
 
   return (
-    <TouchableOpacity onPress={handlePress}>
-      <View style={styles.container}>
+    <TouchableOpacity>
+      <View style={styles.container} onTouchEnd={onTouchEnd}>
         {!!iconElement &&
           <View style={styles.icon}>
             {iconElement}
           </View>
         }
-        {!!iconImage && <Image style={[styles.icon, { tintColor: color }]} source={iconImage || null} />}
+        {!iconElement && <Image style={[styles.icon, { tintColor: color }]} source={iconImage || null} />}
         <Text style={[styles.title, { color }]} numberOfLines={1}>{title}</Text>
       </View>
     </TouchableOpacity>
