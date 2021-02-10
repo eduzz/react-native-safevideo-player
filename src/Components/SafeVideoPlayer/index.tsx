@@ -233,6 +233,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
         onLoad={onLoad}
         onProgress={onProgress}
         style={styles.player}
+        ignoreSilentSwitch='ignore'
         {...videoProps}
       />
       <Animated.View style={[styles.controls, { opacity: fadeAnim }]} pointerEvents={controlsEnabled ? 'auto' : 'none'}>
