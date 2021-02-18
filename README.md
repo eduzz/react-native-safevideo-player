@@ -135,7 +135,7 @@ Platforms: All
 
 #### disableOptions
 Can be a boolean to disable all the options and hide the player's options button or an string array with the options to be disabled
-* **boolean | [<quality> | <rate>]**
+* **boolean | [\<quality\> | \<rate\>]**
 
 Platforms: All
 
