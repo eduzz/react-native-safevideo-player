@@ -278,13 +278,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
               <View style={{
                 flexDirection: 'row'
               }}>
-                <Image
-                  style={{
-                    width: 76,
-                    height: 16
-                  }}
-                  source={safevideoLogoImage}
-                />
+                <Image  style={styles.safevideoLogo} source={safevideoLogoImage} />
 
                 {!disableFullscreen &&
                   <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
@@ -407,6 +401,10 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     marginLeft: 15
+  },
+  safevideoLogo: {
+    width: 76,
+    height: 16
   }
 });
 
