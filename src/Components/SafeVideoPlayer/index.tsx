@@ -4,6 +4,7 @@ import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
 import enterFullscreenImage from '../../Assets/enter-fullscreen.png';
+import safevideoLogoImage from '../../Assets/safevideo-logo.png';
 import exitFullscreenImage from '../../Assets/exit-fullscreen.png';
 import qualityImage from '../../Assets/quality.png';
 import videoSpeedImage from '../../Assets/video-speed.png';
@@ -103,7 +104,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
 
   const setVideoQuality = (quality: number | 'auto') => () => {
     const qualitySource = qualitySources.find(qualitySource => qualitySource.quality === quality);
-    
+
     if(qualitySource) {
       setSource(qualitySource);
       videoRef.current.seek(videoInfo.currentTime);
@@ -158,7 +159,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
     });
     setLoading(false);
   };
-  
+
   const onProgress = (data: OnProgressData) => {
     setVideoInfo({
       ...videoInfo,
@@ -264,21 +265,34 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
             }
           </View>
           <View style={styles.footer}>
-            <View style={styles.footerActions}>
-              <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
-              {!disableFullscreen &&
-                <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
-                  <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
-                </TouchableOpacity>
-              }
-            </View>
-            <ProgressBar 
-              currentTime={videoInfo.currentTime} 
-              duration={videoInfo.duration} 
+            <ProgressBar
+              currentTime={videoInfo.currentTime}
+              duration={videoInfo.duration}
               progressBarColor={progressBarColor}
               onTouchStart={onProgressTouchStart}
               onSeek={onSeek}
             />
+            <View style={styles.footerActions}>
+              <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
+
+              <View style={{
+                flexDirection: 'row'
+              }}>
+                <Image
+                  style={{
+                    width: 76,
+                    height: 15
+                  }}
+                  source={safevideoLogoImage}
+                />
+
+                {!disableFullscreen &&
+                  <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
+                    <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
+                  </TouchableOpacity>
+                }
+              </View>
+            </View>
           </View>
         </View>
       </Animated.View>
@@ -293,13 +307,13 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
           </OptionsModal>
           {!_disableOptions?.quality &&
             <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
-              {qualitySources.map((qualitySource, index) => 
+              {qualitySources.map((qualitySource, index) =>
                 <OptionItem
                 key={index}
-                title={qualitySource.quality === 'auto' ? qualitySource.quality : qualitySource.quality + 'p'} 
-                onPress={setVideoQuality(qualitySource.quality)} 
+                title={qualitySource.quality === 'auto' ? qualitySource.quality : qualitySource.quality + 'p'}
+                onPress={setVideoQuality(qualitySource.quality)}
                 iconImage={_source.quality === qualitySource.quality && checkImage}
-                color={textColor} 
+                color={textColor}
                 />
                 )}
             </OptionsModal>
@@ -383,7 +397,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginTop: 8
   },
   timer: {
     color: '#fff',
@@ -391,7 +405,8 @@ const styles = StyleSheet.create({
   },
   fullscreenIcon: {
     width: 15,
-    height: 15
+    height: 15,
+    marginLeft: 15
   }
 });
 

@@ -37,7 +37,7 @@ const ProgressBar = ({ currentTime, duration, progressBarColor = '#FEC92D', onTo
 
 const styles = StyleSheet.create({
   slider: {
-    width: '100%', 
+    width: '100%',
     height: 30
   }
 });
