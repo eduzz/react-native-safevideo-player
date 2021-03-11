@@ -281,7 +281,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
                 <Image
                   style={{
                     width: 76,
-                    height: 15
+                    height: 16
                   }}
                   source={safevideoLogoImage}
                 />
