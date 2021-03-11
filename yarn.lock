@@ -7906,6 +7906,11 @@ react-native-builder-bob@^0.17.1:
   optionalDependencies:
     jetifier "^1.6.6"
 
+react-native-google-cast@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-google-cast/-/react-native-google-cast-4.0.2.tgz#f645d8749a660aa2ff238d3f49060b13ffae8ca7"
+  integrity sha512-/iYi+mSMnALpF3n1O+5yU4H8KEMLLJQ0/jRf4mIMfGUHxla6e/Ijw+zDsuORUZqU/zRxQ/edGMXRyntWf2kcyQ==
+
 react-native-video@^5.1.0-alpha8:
   version "5.1.0-alpha8"
   resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-5.1.0-alpha8.tgz#f0cb4cb2d74154b7916e68bef0f9b9cdcfe5f568"

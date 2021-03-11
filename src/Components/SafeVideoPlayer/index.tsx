@@ -15,13 +15,14 @@ import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
 import Loading from './Loading';
+import { CastButton, CastState, useCastState, useRemoteMediaClient  } from 'react-native-google-cast';
 
 interface ISource {
   uri: string;
   quality: number | 'auto';
 }
 
-type IOption = 'quality' | 'rate';
+type IOption = 'quality' | 'rate' | 'cast';
 
 interface SafeVideoPlayerProps {
   title?: string;
@@ -59,6 +60,9 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
   const [qualitySources, setQualitySources] = useState<ISource[]>([]);
   const [_disableOptions] = useState(Array.isArray(disableOptions) ? disableOptions.reduce((previousValue, currentValue) => ({ ...previousValue, [currentValue]: true }), {} as any) : disableOptions);
 
+  const castState = useCastState();
+  const remoteMediaClient = useRemoteMediaClient();
+
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -66,6 +70,21 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
     uri: source.uri,
     quality: 'auto'
   });
+
+  useEffect(() => {
+    if(remoteMediaClient && castState === CastState.CONNECTED) {
+      remoteMediaClient.loadMedia({
+        autoplay: true,
+        mediaInfo: {
+          contentUrl: source.uri,
+          contentType: 'application/x-mpegURL'
+        }
+      }).then(
+        console.warn,
+        console.warn
+      );
+    }
+  }, [castState, remoteMediaClient]);
 
   useEffect(() => {
     fetch(source.uri).then(
@@ -248,6 +267,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
             }
             <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
             <View style={styles.headerActions}>
+              {!_disableOptions?.cast && <CastButton style={styles.castButton} />}
               {(!disableOptions || typeof _disableOptions !== 'boolean') &&
                 <TouchableOpacity onPress={showOptions}>
                   <Image style={styles.optionsIcon} source={optionsImage} />
@@ -309,7 +329,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
                 iconImage={_source.quality === qualitySource.quality && checkImage}
                 color={textColor}
                 />
-                )}
+              )}
             </OptionsModal>
           }
           {!_disableOptions?.rate &&
@@ -358,11 +378,17 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     flex: 0,
-    paddingLeft: 8
+    paddingLeft: 8,
+    flexDirection: 'row'
   },
   closeIcon: {
     width: 15,
     height: 15,
+    marginRight: 16
+  },
+  castButton: { 
+    width: 24, 
+    height: 24,
     marginRight: 16
   },
   optionsIcon: {
