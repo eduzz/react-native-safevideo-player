@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
+import progressThumbImage from '../../../Assets/progress-thumb.png';
 
 interface IProps {
   currentTime: number;
@@ -31,14 +32,15 @@ const ProgressBar = ({ currentTime, duration, progressBarColor = '#FEC92D', onTo
       minimumTrackTintColor={progressBarColor}
       thumbTintColor={progressBarColor}
       maximumTrackTintColor='#424242'
+      thumbImage={progressThumbImage}
     />
   );
 };
 
 const styles = StyleSheet.create({
   slider: {
-    width: '100%', 
-    height: 30
+    width: '100%',
+    height: 30,
   }
 });
 
