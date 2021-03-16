@@ -15,7 +15,7 @@ import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
 import Loading from './Loading';
-import { CastButton, CastState, useCastState, useRemoteMediaClient  } from 'react-native-google-cast';
+import { CastButton, CastState, MediaPlayerState, useCastState, useMediaStatus, useRemoteMediaClient, useStreamPosition  } from 'react-native-google-cast';
 
 interface ISource {
   uri: string;
@@ -62,6 +62,8 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
 
   const castState = useCastState();
   const remoteMediaClient = useRemoteMediaClient();
+  const streamPosition = useStreamPosition();
+  const mediaStatus = useMediaStatus();
 
   const videoRef = useRef<any>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -72,19 +74,45 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
   });
 
   useEffect(() => {
-    if(remoteMediaClient && castState === CastState.CONNECTED) {
-      remoteMediaClient.loadMedia({
-        autoplay: true,
-        mediaInfo: {
-          contentUrl: source.uri,
-          contentType: 'application/x-mpegURL'
-        }
-      }).then(
-        console.warn,
-        console.warn
-      );
+    if(remoteMediaClient) {
+      if(castState === CastState.CONNECTED) {
+        remoteMediaClient.getMediaStatus().then(
+          _mediaStatus => {
+            if(_mediaStatus?.mediaInfo.contentUrl !== source.uri) {
+              remoteMediaClient.loadMedia({
+                autoplay: true,
+                startTime: videoInfo.currentTime,
+                playbackRate: rate,
+                mediaInfo: {
+                  contentUrl: source.uri,
+                  contentType: 'application/x-mpegURL'
+                }
+              });
+            }
+          }
+        );
+      } else if(castState === CastState.NOT_CONNECTED) {
+        videoRef.current.seek(videoInfo.currentTime);
+      }
     }
   }, [castState, remoteMediaClient]);
+
+  useEffect(() => {
+    if(streamPosition) {
+      setVideoInfo({
+        ...videoInfo,
+        currentTime: streamPosition
+      })
+    }
+  }, [streamPosition]);
+
+  useEffect(() => {
+    if(mediaStatus) { 
+      setPlaying(mediaStatus?.playerState === MediaPlayerState.PLAYING);
+      setLoading(mediaStatus?.playerState === MediaPlayerState.LOADING || mediaStatus?.playerState === MediaPlayerState.BUFFERING);
+      setRate(mediaStatus.playbackRate);
+    }
+  }, [mediaStatus]);
 
   useEffect(() => {
     fetch(source.uri).then(
@@ -110,14 +138,23 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
   }, []);
 
   const play = () => {
+    if(remoteMediaClient) {
+      remoteMediaClient.play();
+    }
     setPlaying(true);
   };
 
   const pause = () => {
+    if(remoteMediaClient) {
+      remoteMediaClient.pause();
+    }
     setPlaying(false);
   };
 
   const setVideoRate = (_rate: number) => () => {
+    if(remoteMediaClient) {
+      remoteMediaClient.setPlaybackRate(_rate);
+    }
     setRate(_rate);
   };
 
@@ -193,6 +230,9 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
   };
 
   const onSeek = (seekTo: number) => {
+    if(remoteMediaClient) {
+      remoteMediaClient.seek({ position: seekTo });
+    }
     videoRef.current.seek(seekTo);
     setPlaying(true);
     onSeekEnd && onSeekEnd();
@@ -247,7 +287,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
           uri: _source.uri
         } as any}
         resizeMode='contain'
-        paused={!playing}
+        paused={!playing || castState === CastState.CONNECTED || castState === CastState.CONNECTING}
         rate={rate}
         onLoadStart={onLoadStart}
         onLoad={onLoad}
@@ -276,7 +316,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
             </View>
           </View>
           <View style={styles.body}>
-            {loading ?
+            {loading || castState === CastState.CONNECTING ?
               <Loading />
               :
               <TouchableOpacity onPress={playing ? pause : play}>
@@ -316,10 +356,10 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
             {!!menuOption &&
               ([...(menuOption?.length ? menuOption : [menuOption])]).map((option, index) => cloneElement(option, { key: index }))
             }
-            {!_disableOptions?.quality && <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />}
+            {!_disableOptions?.quality && castState !== CastState.CONNECTED && <OptionItem title='Qualidade' iconImage={qualityImage} color={textColor} onPress={showQualityOptions} />}
             {!_disableOptions?.rate && <OptionItem title='Velocidade' iconImage={videoSpeedImage} color={textColor} onPress={showSpeedOptions} />}
           </OptionsModal>
-          {!_disableOptions?.quality &&
+          {!_disableOptions?.quality && castState !== CastState.CONNECTED &&
             <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
               {qualitySources.map((qualitySource, index) =>
                 <OptionItem
