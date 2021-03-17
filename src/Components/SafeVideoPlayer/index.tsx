@@ -76,24 +76,29 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
 
   useEffect(() => {
     if(remoteMediaClient) {
-      if(castState === CastState.CONNECTED) {
-        remoteMediaClient.getMediaStatus().then(
-          _mediaStatus => {
-            if(_mediaStatus?.mediaInfo.contentUrl !== source.uri) {
-              remoteMediaClient.loadMedia({
-                autoplay: true,
-                startTime: videoInfo.currentTime,
-                playbackRate: rate,
-                mediaInfo: {
-                  contentUrl: source.uri,
-                  contentType: 'application/x-mpegURL'
-                }
-              });
+      switch(castState) {
+        case CastState.CONNECTED:
+          remoteMediaClient.getMediaStatus().then(
+            _mediaStatus => {
+              if(!_mediaStatus || _mediaStatus?.mediaInfo.contentUrl !== source.uri) {
+                remoteMediaClient.loadMedia({
+                  autoplay: true,
+                  startTime: videoInfo.currentTime,
+                  playbackRate: rate,
+                  mediaInfo: {
+                    contentUrl: source.uri,
+                    contentType: 'application/x-mpegURL'
+                  }
+                });
+              }
             }
-          }
-        );
-      } else if(castState === CastState.NOT_CONNECTED) {
-        videoRef.current.seek(videoInfo.currentTime);
+          );
+          break;
+        case CastState.NOT_CONNECTED:
+          videoRef.current.seek(videoInfo.currentTime);
+          break;
+        default:
+          break;
       }
     }
   }, [castState, remoteMediaClient]);
@@ -335,12 +340,8 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
             />
             <View style={styles.footerActions}>
               <Text style={styles.timer}>{formatTime(videoInfo.currentTime)} / {formatTime(videoInfo.duration)}</Text>
-
-              <View style={{
-                flexDirection: 'row'
-              }}>
+              <View style={{ flexDirection: 'row' }}>
                 <Image  style={styles.safevideoLogo} source={safevideoLogoImage} />
-
                 {!disableFullscreen &&
                   <TouchableOpacity onPress={fullscreen ? exitFullscreen : enterFullscreen}>
                     <Image style={styles.fullscreenIcon} source={fullscreen ? exitFullscreenImage : enterFullscreenImage} />
@@ -430,6 +431,7 @@ const styles = StyleSheet.create({
   castButton: { 
     width: 24, 
     height: 24,
+    tintColor: '#fff',
     marginRight: 16
   },
   optionsIcon: {
