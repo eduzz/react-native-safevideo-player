@@ -41,8 +41,7 @@ export default function App() {
         onEnterFullscreen={onEnterFullscreen}
         onExitFullscreen={onExitFullscreen}
         containerStyle={[styles.playerContainer, fullscreen && styles.fullscreen]}
-        // source={{ uri: 'http://website-videozz-archive.s3-website-us-east-1.amazonaws.com/7ddf8391-c449-4543-bbda-af41c09b0c3f/playlist.m3u8' }}
-        source={{ uri: 'http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8' }}
+        source={{ uri: 'http://website-videozz-archive.s3-website-us-east-1.amazonaws.com/7ddf8391-c449-4543-bbda-af41c09b0c3f/playlist.m3u8' }}
       />
       <View style={styles.darkMode}>
         <Switch value={darkModeActive} onValueChange={toggleDarkMode} />
