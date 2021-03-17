@@ -22,7 +22,7 @@ interface ISource {
   quality: number | 'auto';
 }
 
-type IOption = 'quality' | 'rate' | 'cast';
+type IOption = 'quality' | 'rate';
 
 interface SafeVideoPlayerProps {
   title?: string;
@@ -39,6 +39,7 @@ interface SafeVideoPlayerProps {
   menuOption?: any | any[];
   disableFullscreen?: boolean;
   disableCloseButton?: boolean;
+  disableCast?: boolean;
   onRequestClose?: () => void;
   disableOptions?: boolean | IOption[];
   playOnStart?: boolean;
@@ -46,7 +47,7 @@ interface SafeVideoPlayerProps {
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
-const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
+const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
   const [rate, setRate] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -307,7 +308,7 @@ const SafeVideoPlayer = ({ title, progressBarColor, textColor, backgroundColor, 
             }
             <Text numberOfLines={1} style={styles.videoTitle}>{title}</Text>
             <View style={styles.headerActions}>
-              {!_disableOptions?.cast && <CastButton style={styles.castButton} />}
+              {!disableCast && <CastButton style={styles.castButton} />}
               {(!disableOptions || typeof _disableOptions !== 'boolean') &&
                 <TouchableOpacity onPress={showOptions}>
                   <Image style={styles.optionsIcon} source={optionsImage} />

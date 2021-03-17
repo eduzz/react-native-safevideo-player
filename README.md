@@ -37,6 +37,7 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [onSeekEnd](#onSeekEnd)
 * [menuOption](#menuOption)
 * [disableFullscreen](#disableFullscreen)
+* [disableCast](#disableCast)
 * [disableOptions](#disableOptions)
 * [playOnStart](#playOnStart)
 * [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
@@ -129,6 +130,12 @@ Platforms: All
 
 #### disableFullscreen
 Hide the player's fullscreen button
+* **boolean**
+
+Platforms: All
+
+#### disableCast
+Hide the player's cast button
 * **boolean**
 
 Platforms: All
