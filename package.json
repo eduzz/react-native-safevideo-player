@@ -154,6 +154,7 @@
   "dependencies": {
     "@react-native-community/slider": "^3.0.3",
     "@types/react-native-video": "^5.0.3",
+    "react-native-google-cast": "^4.0.2",
     "react-native-video": "^5.1.0-alpha8"
   }
 }
