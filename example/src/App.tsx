@@ -35,6 +35,7 @@ export default function App() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }, fullscreen && { justifyContent: 'center', alignItems: 'center' }]}>
       <SafeVideoPlayer
         title='SaveVideo player example'
+        castId="test-id"
         textColor={theme.textColor}
         backgroundColor={theme.backgroundColor}
         onError={handleError}

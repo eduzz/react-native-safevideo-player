@@ -26,6 +26,7 @@ import SafevideoPlayer from "react-native-safevideo-player";
 
 ### Configurable props
 * [title](#title)
+* [castId](#castId)
 * [progressBarColor](#progressBarColor)
 * [textColor](#textColor)
 * [backgroundColor](#backgroundColor)
@@ -52,6 +53,14 @@ import SafevideoPlayer from "react-native-safevideo-player";
 
 #### title
 The text that will be shown in the player's header
+* **string**
+
+Platforms: All
+
+#### castId
+The id used to verify if the video is already been played. 
+If not set, every time the player is initiated it will restart the video while connected to a chromecast.
+If set and the id is the same of the current one been casted, the player will continue the current video and show it's progress
 * **string**
 
 Platforms: All
