@@ -297,7 +297,7 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
           uri: _source.uri
         } as any}
         resizeMode='contain'
-        paused={disableCast ? !playing : !playing || castState === CastState.CONNECTED || castState === CastState.CONNECTING}
+        paused={disableCast ? !playing : (!playing || castState === CastState.CONNECTED || castState === CastState.CONNECTING)}
         rate={rate}
         onLoadStart={onLoadStart}
         onLoad={onLoad}
@@ -326,7 +326,7 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
             </View>
           </View>
           <View style={styles.body}>
-            {disableCast ? loading : loading || castState === CastState.CONNECTING ?
+            {(disableCast ? loading : (loading || castState === CastState.CONNECTING)) ?
               <Loading />
               :
               <TouchableOpacity onPress={playing ? pause : play}>
