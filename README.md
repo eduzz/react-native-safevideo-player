@@ -29,6 +29,7 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [castId](#castId)
 * [progressBarColor](#progressBarColor)
 * [textColor](#textColor)
+* [startAt](#startAt)
 * [backgroundColor](#backgroundColor)
 * [onEnterFullscreen](#onEnterFullscreen)
 * [onExitFullscreen](#onExitFullscreen)
@@ -78,6 +79,14 @@ The color that will override the default player's menu background color
 * **string**
 
 Default: #000
+
+Platforms: All
+
+#### startAt
+The time in seconds the video will start when the player finish load
+* **int**
+
+Default: 0
 
 Platforms: All
 

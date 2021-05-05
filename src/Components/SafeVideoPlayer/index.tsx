@@ -37,6 +37,7 @@ interface SafeVideoPlayerProps {
   onSeekStart?: () => void;
   onSeekEnd?: () => void;
   source?: any;
+  startAt?: number;
   menuOption?: any | any[];
   disableFullscreen?: boolean;
   disableCloseButton?: boolean;
@@ -48,7 +49,7 @@ interface SafeVideoPlayerProps {
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
-const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
+const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, startAt = 0, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
   const [rate, setRate] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -219,8 +220,9 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
   };
 
   const onLoad = (event: OnLoadData) => {
+    remoteMediaClient?.seek({ position: startAt });
     setVideoInfo({
-      currentTime: event.currentTime,
+      currentTime: startAt,
       duration: event.duration
     });
     setLoading(false);
