@@ -371,11 +371,11 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
             <OptionsModal visible={showingQualityOptions} textColor={textColor} backgroundColor={backgroundColor} onRequestClose={hideQualityOptions}>
               {qualitySources.map((qualitySource, index) =>
                 <OptionItem
-                key={index}
-                title={qualitySource.quality === 'auto' ? qualitySource.quality : qualitySource.quality + 'p'}
-                onPress={setVideoQuality(qualitySource.quality)}
-                iconImage={_source.quality === qualitySource.quality && checkImage}
-                color={textColor}
+                  key={index}
+                  title={qualitySource.quality === 'auto' ? qualitySource.quality : qualitySource.quality + 'p'}
+                  onPress={setVideoQuality(qualitySource.quality)}
+                  iconImage={_source.quality === qualitySource.quality && checkImage}
+                  color={textColor}
                 />
               )}
             </OptionsModal>

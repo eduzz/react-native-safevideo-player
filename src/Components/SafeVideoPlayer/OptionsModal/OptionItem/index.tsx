@@ -6,11 +6,12 @@ interface IProps {
   iconElement?: any;
   iconImage?: any;
   color?: string;
+  backgroundColor?: string;
   avoidClosing?: boolean;
   onPress?: ((event: GestureResponderEvent) => void) | (() => void);
 }
 
-const OptionItem = ({ title, iconImage, iconElement, color, avoidClosing, onPress }: IProps) => {
+const OptionItem = ({ title, iconImage, iconElement, color, backgroundColor, avoidClosing, onPress }: IProps) => {
   const onTouchEnd = (event: GestureResponderEvent) => {
     if(avoidClosing) {
       event.stopPropagation();
@@ -25,7 +26,7 @@ const OptionItem = ({ title, iconImage, iconElement, color, avoidClosing, onPres
 
   return (
     <TouchableOpacity>
-      <View style={styles.container} onTouchEnd={onTouchEnd}>
+      <View style={[styles.container, !!backgroundColor && { backgroundColor }]} onTouchEnd={onTouchEnd}>
         {!!iconElement &&
           <View style={styles.icon}>
             {iconElement}
@@ -41,6 +42,7 @@ const OptionItem = ({ title, iconImage, iconElement, color, avoidClosing, onPres
 const styles = StyleSheet.create({
   container: {
     flex: 0,
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 18
