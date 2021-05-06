@@ -49,7 +49,7 @@ interface SafeVideoPlayerProps {
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
-const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, source, startAt = 0, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
+const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, onProgress, source, startAt = 0, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
   const [rate, setRate] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -228,11 +228,13 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
     setLoading(false);
   };
 
-  const onProgress = (data: OnProgressData) => {
+  const onVideoProgress = (data: OnProgressData) => {
     setVideoInfo({
       ...videoInfo,
       currentTime: data.currentTime,
     });
+
+    onProgress && onProgress(data);
   };
 
   const onProgressTouchStart = () => {
@@ -303,7 +305,7 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
         rate={rate}
         onLoadStart={onLoadStart}
         onLoad={onLoad}
-        onProgress={onProgress}
+        onProgress={onVideoProgress}
         style={styles.player}
         ignoreSilentSwitch='ignore'
         {...videoProps}
