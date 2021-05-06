@@ -220,11 +220,11 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
   };
 
   const onLoad = (event: OnLoadData) => {
-    remoteMediaClient?.seek({ position: startAt });
     setVideoInfo({
       currentTime: startAt,
       duration: event.duration
     });
+    videoRef.current.seek(startAt);
     setLoading(false);
   };
 
