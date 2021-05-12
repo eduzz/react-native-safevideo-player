@@ -86,7 +86,7 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
                 if(!castId || _mediaStatus?.mediaInfo.contentId !== castId) {
                   remoteMediaClient.loadMedia({
                     autoplay: true,
-                    startTime: videoInfo.currentTime,
+                    startTime: videoInfo.currentTime || startAt,
                     playbackRate: rate,
                     mediaInfo: {
                       contentId: castId,
