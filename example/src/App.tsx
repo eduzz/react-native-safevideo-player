@@ -5,6 +5,7 @@ import SafeVideoPlayer, { LoadError } from 'react-native-safevideo-player';
 export default function App() {
   const [fullscreen, setFullscreen] = React.useState(false);
   const [darkModeActive, setDarkModeActive] = React.useState(false);
+  const [showPlayer, setShowPlayer] = React.useState(true);
 
   const handleError = (error: LoadError) => {
     console.warn(error);
@@ -22,6 +23,10 @@ export default function App() {
     setDarkModeActive(!darkModeActive);
   };
 
+  const toggleShowPlayer = () => {
+    setShowPlayer(!showPlayer);
+  };
+
   const theme = {
     get textColor() {
       return darkModeActive ? '#fff' : '#000';
@@ -33,20 +38,28 @@ export default function App() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }, fullscreen && { justifyContent: 'center', alignItems: 'center' }]}>
-      <SafeVideoPlayer
-        title='SaveVideo player example'
-        castId="test-id"
-        textColor={theme.textColor}
-        backgroundColor={theme.backgroundColor}
-        onError={handleError}
-        onEnterFullscreen={onEnterFullscreen}
-        onExitFullscreen={onExitFullscreen}
-        containerStyle={[styles.playerContainer, fullscreen && styles.fullscreen]}
-        source={{ uri: 'http://website-videozz-archive.s3-website-us-east-1.amazonaws.com/7ddf8391-c449-4543-bbda-af41c09b0c3f/playlist.m3u8' }}
-      />
-      <View style={styles.darkMode}>
+      {showPlayer &&
+        <SafeVideoPlayer
+          title='SaveVideo player example'
+          artwork='https://jovemenriquecedor.com.br/wp-content/uploads/2021/04/eduzz-1.jpg'
+          artist='Eduzz'
+          castId="test-id"
+          textColor={theme.textColor}
+          backgroundColor={theme.backgroundColor}
+          onError={handleError}
+          onEnterFullscreen={onEnterFullscreen}
+          onExitFullscreen={onExitFullscreen}
+          containerStyle={[styles.playerContainer, fullscreen && styles.fullscreen]}
+          source={{ uri: 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8' }}
+        />
+      }
+      <View style={styles.option}>
         <Switch value={darkModeActive} onValueChange={toggleDarkMode} />
-        <Text style={[styles.darkModeLabel, { color: theme.textColor }]}>Dark mode</Text>
+        <Text style={[styles.switchLabel, { color: theme.textColor }]}>Dark mode</Text>
+      </View>
+      <View style={styles.option}>
+        <Switch value={showPlayer} onValueChange={toggleShowPlayer} />
+        <Text style={[styles.switchLabel, { color: theme.textColor }]}>Show player</Text>
       </View>
     </SafeAreaView>
   );
@@ -65,13 +78,13 @@ const styles = StyleSheet.create({
     zIndex: 999,
     height: '100%'
   },
-  darkMode: {
+  option: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 16,
     marginHorizontal: 8
   },
-  darkModeLabel: {
+  switchLabel: {
     marginLeft: 8,
     fontSize: 18
   }

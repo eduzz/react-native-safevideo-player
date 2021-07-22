@@ -16,6 +16,7 @@ import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
 import Loading from './Loading';
 import { CastButton, CastState, useMediaStatus, useCastState, useRemoteMediaClient, MediaPlayerState, useStreamPosition  } from 'react-native-google-cast';
+import MusicControl, { Command } from 'react-native-music-control'
 
 interface ISource {
   uri: string;
@@ -26,6 +27,8 @@ type IOption = 'quality' | 'rate';
 
 interface SafeVideoPlayerProps {
   title?: string;
+  artwork?: string;
+  artist?: string;
   castId?: string;
   progressBarColor?: string;
   textColor?: string;
@@ -49,7 +52,7 @@ interface SafeVideoPlayerProps {
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
-const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, onProgress, source, startAt = 0, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
+const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, onProgress, source, startAt = 0, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
   const [rate, setRate] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -146,13 +149,55 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
         ]);
       }
     );
+    
+    MusicControl.enableControl('play', true);
+    MusicControl.enableControl('pause', true);
+    MusicControl.enableControl('stop', false);
+    MusicControl.enableControl('nextTrack', false);
+    MusicControl.enableControl('previousTrack', false);
+    MusicControl.enableControl('changePlaybackPosition', false);
+    MusicControl.enableControl('seekForward', false); // iOS only
+    MusicControl.enableControl('seekBackward', false); // iOS only
+    MusicControl.enableControl('seek', false); // Android only
+    MusicControl.enableControl('skipBackward', false, { interval: 15 })
+    MusicControl.enableControl('skipForward', false, { interval: 30 })
+    MusicControl.enableControl('setRating', false); // Android only
+    MusicControl.enableControl('volume', false); // Android only. Only affected when remoteVolume is enabled
+    MusicControl.enableControl('remoteVolume', false); // Android only
+    MusicControl.enableControl('enableLanguageOption', false); // iOS only
+    MusicControl.enableControl('disableLanguageOption', false); // iOS only
+    
+    MusicControl.on(Command.play, () => {
+      play();
+    });
+    
+    MusicControl.on(Command.pause, () => {
+      pause();
+    });
+
+    MusicControl.setNowPlaying({
+      title,
+      artwork,
+      artist,
+      duration: videoInfo.duration || 0,
+      isLiveStream: false
+    });
+
+    return () => {
+      MusicControl.stopControl();
+    };
   }, []);
 
   const play = () => {
     if(remoteMediaClient && !disableCast) {
       remoteMediaClient.play();
     }
+    
     setPlaying(true);
+
+    MusicControl.updatePlayback({
+      state: MusicControl.STATE_PLAYING
+    });
   };
 
   const pause = () => {
@@ -160,6 +205,10 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
       remoteMediaClient.pause();
     }
     setPlaying(false);
+
+    MusicControl.updatePlayback({
+      state: MusicControl.STATE_PAUSED
+    });
   };
 
   const setVideoRate = (_rate: number) => () => {
@@ -235,6 +284,10 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
     });
 
     onProgress && onProgress(data);
+
+    MusicControl.updatePlayback({
+      elapsedTime: data.currentTime
+    });
   };
 
   const onProgressTouchStart = () => {
@@ -247,6 +300,7 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
     if(remoteMediaClient && !disableCast) {
       remoteMediaClient.seek({ position: seekTo });
     }
+
     videoRef.current.seek(seekTo);
     setPlaying(true);
     onSeekEnd && onSeekEnd();
@@ -308,6 +362,7 @@ const SafeVideoPlayer = ({ title, castId, progressBarColor, textColor, backgroun
         onProgress={onVideoProgress}
         style={styles.player}
         ignoreSilentSwitch='ignore'
+        playInBackground
         {...videoProps}
       />
       <Animated.View style={[styles.controls, { opacity: fadeAnim }]} pointerEvents={controlsEnabled ? 'auto' : 'none'}>

@@ -6,8 +6,12 @@ SafeVideo player for react native apps
 
 ```sh
 yarn add react-native-video
+yarn add react-native-google-cast
+yarn add react-native-music-control
 yarn add react-native-safevideo-player
 ```
+
+* See the installation steps for all the added dependencies to get it running. Some libs need extra configuration for android and iOS.
 
 ## Usage
 

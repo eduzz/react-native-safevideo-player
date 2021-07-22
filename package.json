@@ -1,6 +1,6 @@
 {
   "name": "react-native-safevideo-player",
-  "version": "0.2.22",
+  "version": "0.2.23",
   "description": "SafeVideo video player for react native apps",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -155,6 +155,7 @@
     "@react-native-community/slider": "^3.0.3",
     "@types/react-native-video": "^5.0.3",
     "react-native-google-cast": "^4.0.2",
-    "react-native-video": "^5.1.0-alpha8"
+    "react-native-music-control": "^1.4.0",
+    "react-native-video": "5.0.2"
   }
 }
