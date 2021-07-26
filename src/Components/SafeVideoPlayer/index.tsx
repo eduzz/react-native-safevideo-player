@@ -1,5 +1,5 @@
 import React, { cloneElement, useEffect, useRef, useState } from 'react';
-import { Animated, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Animated, GestureResponderEvent, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 import Video, { OnLoadData, OnProgressData, VideoProperties } from 'react-native-video';
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
@@ -48,11 +48,12 @@ interface SafeVideoPlayerProps {
   onRequestClose?: () => void;
   disableOptions?: boolean | IOption[];
   playOnStart?: boolean;
+  playInBackground?: boolean;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
 
-const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, containerStyle, controlsStyle, onSeekStart, onSeekEnd, onProgress, source, startAt = 0, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
+const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, textColor, backgroundColor, onEnterFullscreen, onExitFullscreen, playInBackground, containerStyle, controlsStyle, onSeekStart, onSeekEnd, onProgress, source, startAt = 0, menuOption, playOnStart, disableFullscreen, disableOptions, disableCloseButton, disableCast, onRequestClose, ...videoProps }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
   const [rate, setRate] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -115,7 +116,13 @@ const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, tex
         setVideoInfo({
           duration: videoInfo.duration,
           currentTime: streamPosition
-        })
+        });
+
+        if(playInBackground) {
+          MusicControl.updatePlayback({
+            elapsedTime: streamPosition
+          });
+        }
       }
     }, [streamPosition]);
   
@@ -149,66 +156,81 @@ const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, tex
         ]);
       }
     );
-    
-    MusicControl.enableControl('play', true);
-    MusicControl.enableControl('pause', true);
-    MusicControl.enableControl('stop', false);
-    MusicControl.enableControl('nextTrack', false);
-    MusicControl.enableControl('previousTrack', false);
-    MusicControl.enableControl('changePlaybackPosition', false);
-    MusicControl.enableControl('seekForward', false); // iOS only
-    MusicControl.enableControl('seekBackward', false); // iOS only
-    MusicControl.enableControl('seek', false); // Android only
-    MusicControl.enableControl('skipBackward', false, { interval: 15 })
-    MusicControl.enableControl('skipForward', false, { interval: 30 })
-    MusicControl.enableControl('setRating', false); // Android only
-    MusicControl.enableControl('volume', false); // Android only. Only affected when remoteVolume is enabled
-    MusicControl.enableControl('remoteVolume', false); // Android only
-    MusicControl.enableControl('enableLanguageOption', false); // iOS only
-    MusicControl.enableControl('disableLanguageOption', false); // iOS only
-    
-    MusicControl.on(Command.play, () => {
-      play();
-    });
-    
-    MusicControl.on(Command.pause, () => {
-      pause();
-    });
+  }, []);
+  
+  useEffect(() => {
+    if(playInBackground) {
+      MusicControl.enableBackgroundMode(true);
 
-    MusicControl.setNowPlaying({
-      title,
-      artwork,
-      artist,
-      duration: videoInfo.duration || 0,
-      isLiveStream: false
-    });
+      MusicControl.enableControl('play', true);
+      MusicControl.enableControl('pause', true);
+      MusicControl.enableControl('stop', false);
+      MusicControl.enableControl('nextTrack', false);
+      MusicControl.enableControl('previousTrack', false);
+      MusicControl.enableControl('changePlaybackPosition', false);
+      MusicControl.enableControl('seekForward', false); // iOS only
+      MusicControl.enableControl('seekBackward', false); // iOS only
+      MusicControl.enableControl('seek', false); // Android only
+      MusicControl.enableControl('skipBackward', false, { interval: 15 })
+      MusicControl.enableControl('skipForward', false, { interval: 30 })
+      MusicControl.enableControl('setRating', false); // Android only
+      MusicControl.enableControl('volume', false); // Android only. Only affected when remoteVolume is enabled
+      MusicControl.enableControl('remoteVolume', false); // Android only
+      MusicControl.enableControl('enableLanguageOption', false); // iOS only
+      MusicControl.enableControl('disableLanguageOption', false); // iOS only
+      
+      MusicControl.on(Command.play, () => {
+        play();
+      });
+      
+      MusicControl.on(Command.pause, () => {
+        pause();
+      });
+    }
 
     return () => {
-      MusicControl.stopControl();
+      if(playInBackground) {
+        MusicControl.stopControl();
+      }
     };
-  }, []);
+  }, [remoteMediaClient]);
 
-  const play = () => {
+  const play = (event?: GestureResponderEvent) => {
     if(remoteMediaClient && !disableCast) {
       remoteMediaClient.play();
     }
     
     setPlaying(true);
 
-    MusicControl.updatePlayback({
-      state: MusicControl.STATE_PLAYING
-    });
+    if(playInBackground) {
+      if(event) {
+        MusicControl.setNowPlaying({
+          title,
+          artwork,
+          artist,
+          duration: videoInfo.duration || 0,
+          isLiveStream: false
+        });
+      }
+
+      MusicControl.updatePlayback({
+        state: MusicControl.STATE_PLAYING
+      });
+    }
   };
 
   const pause = () => {
     if(remoteMediaClient && !disableCast) {
       remoteMediaClient.pause();
     }
+
     setPlaying(false);
 
-    MusicControl.updatePlayback({
-      state: MusicControl.STATE_PAUSED
-    });
+    if(playInBackground) {
+      MusicControl.updatePlayback({
+        state: MusicControl.STATE_PAUSED
+      });
+    }
   };
 
   const setVideoRate = (_rate: number) => () => {
@@ -285,9 +307,11 @@ const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, tex
 
     onProgress && onProgress(data);
 
-    MusicControl.updatePlayback({
-      elapsedTime: data.currentTime
-    });
+    if(playInBackground) {
+      MusicControl.updatePlayback({
+        elapsedTime: data.currentTime
+      });
+    }
   };
 
   const onProgressTouchStart = () => {
@@ -362,7 +386,7 @@ const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, tex
         onProgress={onVideoProgress}
         style={styles.player}
         ignoreSilentSwitch='ignore'
-        playInBackground
+        playInBackground={playInBackground}
         {...videoProps}
       />
       <Animated.View style={[styles.controls, { opacity: fadeAnim }]} pointerEvents={controlsEnabled ? 'auto' : 'none'}>

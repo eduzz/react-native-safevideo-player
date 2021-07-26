@@ -30,6 +30,8 @@ import SafevideoPlayer from "react-native-safevideo-player";
 
 ### Configurable props
 * [title](#title)
+* [artist](#artist)
+* [artwork](#artwork)
 * [castId](#castId)
 * [progressBarColor](#progressBarColor)
 * [textColor](#textColor)
@@ -46,6 +48,7 @@ import SafevideoPlayer from "react-native-safevideo-player";
 * [disableCast](#disableCast)
 * [disableOptions](#disableOptions)
 * [playOnStart](#playOnStart)
+* [playInBackground](#playInBackground)
 * [Every prop from react-native-video](https://github.com/react-native-video/react-native-video/blob/master/README.md#configurable-props)
 
 ### Event props
@@ -57,7 +60,19 @@ import SafevideoPlayer from "react-native-safevideo-player";
 ## Configurable props
 
 #### title
-The text that will be shown in the player's header
+The text that will be shown in the player's header and the music card if the playInBackground prop is true
+* **string**
+
+Platforms: All
+
+#### artist
+The text that will be shown in the music card if the playInBackground prop is true
+* **string**
+
+Platforms: All
+
+#### artwork
+The text url that will be shown in the music card if the playInBackground prop is true
 * **string**
 
 Platforms: All
@@ -183,6 +198,12 @@ Callback executed when the close button is click by the user
 #### playOnStart
 Tells the player to start playing when the video has loaded
 * **any | any[]**
+
+Platforms: All
+
+#### playInBackground
+Play the video audio in background and creates a music card to control the audio via notification or in the lockscreen
+* **boolean**
 
 Platforms: All
 
