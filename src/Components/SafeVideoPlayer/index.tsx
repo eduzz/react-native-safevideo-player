@@ -98,6 +98,20 @@ const SafeVideoPlayer = ({ title, artwork, artist, castId, progressBarColor, tex
                       contentType: 'application/x-mpegURL'
                     }
                   });
+
+                  if(playInBackground) {
+                    MusicControl.setNowPlaying({
+                      title,
+                      artwork,
+                      artist,
+                      duration: videoInfo.duration || 0,
+                      isLiveStream: false
+                    });
+              
+                    MusicControl.updatePlayback({
+                      state: MusicControl.STATE_PLAYING
+                    });
+                  }
                 }
               }
             );
