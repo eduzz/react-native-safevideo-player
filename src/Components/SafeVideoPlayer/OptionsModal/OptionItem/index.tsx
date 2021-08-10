@@ -1,5 +1,12 @@
 import React from 'react';
-import { GestureResponderEvent, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  GestureResponderEvent,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 interface IProps {
   title: string;
@@ -11,14 +18,22 @@ interface IProps {
   onPress?: ((event: GestureResponderEvent) => void) | (() => void);
 }
 
-const OptionItem = ({ title, iconImage, iconElement, color, backgroundColor, avoidClosing, onPress }: IProps) => {
+const OptionItem = ({
+  title,
+  iconImage,
+  iconElement,
+  color,
+  backgroundColor,
+  avoidClosing,
+  onPress,
+}: IProps) => {
   const onTouchEnd = (event: GestureResponderEvent) => {
-    if(avoidClosing) {
+    if (avoidClosing) {
       event.stopPropagation();
       onPress && onPress(event);
       return;
     }
-    
+
     setTimeout(() => {
       onPress && onPress(event);
     }, 300);
@@ -26,14 +41,20 @@ const OptionItem = ({ title, iconImage, iconElement, color, backgroundColor, avo
 
   return (
     <TouchableOpacity>
-      <View style={[styles.container, !!backgroundColor && { backgroundColor }]} onTouchEnd={onTouchEnd}>
-        {!!iconElement &&
-          <View style={styles.icon}>
-            {iconElement}
-          </View>
-        }
-        {!iconElement && <Image style={[styles.icon, { tintColor: color }]} source={iconImage || null} />}
-        <Text style={[styles.title, { color }]} numberOfLines={1}>{title}</Text>
+      <View
+        style={[styles.container, !!backgroundColor && { backgroundColor }]}
+        onTouchEnd={onTouchEnd}
+      >
+        {!!iconElement && <View style={styles.icon}>{iconElement}</View>}
+        {!iconElement && (
+          <Image
+            style={[styles.icon, { tintColor: color }]}
+            source={iconImage || null}
+          />
+        )}
+        <Text style={[styles.title, { color }]} numberOfLines={1}>
+          {title}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -45,19 +66,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 18
+    padding: 18,
   },
   icon: {
     flex: 0,
     width: 25,
     height: 25,
-    marginRight: 32
+    marginRight: 32,
   },
   title: {
     flex: 1,
     color: '#000',
-    fontSize: 16
-  }
+    fontSize: 16,
+  },
 });
 
 export default OptionItem;

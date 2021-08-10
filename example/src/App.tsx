@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  Dimensions,
+  SafeAreaView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from 'react-native';
 import SafeVideoPlayer, { LoadError } from 'react-native-safevideo-player';
 
 export default function App() {
@@ -33,34 +40,50 @@ export default function App() {
     },
     get backgroundColor() {
       return darkModeActive ? '#1e2124' : '#fff';
-    }
+    },
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }, fullscreen && { justifyContent: 'center', alignItems: 'center' }]}>
-      {showPlayer &&
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: theme.backgroundColor },
+        fullscreen && styles.fullScreenContainer,
+      ]}
+    >
+      {showPlayer && (
         <SafeVideoPlayer
-          title='SaveVideo player example'
-          artwork='https://jovemenriquecedor.com.br/wp-content/uploads/2021/04/eduzz-1.jpg'
-          artist='Eduzz'
+          title="SaveVideo player example"
+          artwork="https://jovemenriquecedor.com.br/wp-content/uploads/2021/04/eduzz-1.jpg"
+          artist="Eduzz"
           castId="test-id"
           textColor={theme.textColor}
           backgroundColor={theme.backgroundColor}
           onError={handleError}
           onEnterFullscreen={onEnterFullscreen}
           onExitFullscreen={onExitFullscreen}
-          containerStyle={[styles.playerContainer, fullscreen && styles.fullscreen]}
-          source={{ uri: 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8' }}
+          containerStyle={[
+            styles.playerContainer,
+            fullscreen && styles.fullscreen,
+          ]}
+          source={{
+            uri:
+              'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8',
+          }}
           playInBackground
         />
-      }
+      )}
       <View style={styles.option}>
         <Switch value={darkModeActive} onValueChange={toggleDarkMode} />
-        <Text style={[styles.switchLabel, { color: theme.textColor }]}>Dark mode</Text>
+        <Text style={[styles.switchLabel, { color: theme.textColor }]}>
+          Dark mode
+        </Text>
       </View>
       <View style={styles.option}>
         <Switch value={showPlayer} onValueChange={toggleShowPlayer} />
-        <Text style={[styles.switchLabel, { color: theme.textColor }]}>Show player</Text>
+        <Text style={[styles.switchLabel, { color: theme.textColor }]}>
+          Show player
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -68,25 +91,29 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
-  playerContainer: { 
-    width: '100%', 
-    height: Dimensions.get('window').width / 1.77
+  fullScreenContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playerContainer: {
+    width: '100%',
+    height: Dimensions.get('window').width / 1.77,
   },
   fullscreen: {
     position: 'absolute',
     zIndex: 999,
-    height: '100%'
+    height: '100%',
   },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 16,
-    marginHorizontal: 8
+    marginHorizontal: 8,
   },
   switchLabel: {
     marginLeft: 8,
-    fontSize: 18
-  }
-})
+    fontSize: 18,
+  },
+});

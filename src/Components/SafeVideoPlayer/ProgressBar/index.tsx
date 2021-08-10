@@ -11,7 +11,13 @@ interface IProps {
   progressBarColor?: string;
 }
 
-const ProgressBar = ({ currentTime, duration, progressBarColor = '#FEC92D', onTouchStart, onSeek }: IProps) => {
+const ProgressBar = ({
+  currentTime,
+  duration,
+  progressBarColor = '#FEC92D',
+  onTouchStart,
+  onSeek,
+}: IProps) => {
   const [localTime, setLocalTime] = useState(currentTime);
 
   useEffect(() => setLocalTime(currentTime), [currentTime]);
@@ -31,7 +37,7 @@ const ProgressBar = ({ currentTime, duration, progressBarColor = '#FEC92D', onTo
       maximumValue={duration}
       minimumTrackTintColor={progressBarColor}
       thumbTintColor={progressBarColor}
-      maximumTrackTintColor='#424242'
+      maximumTrackTintColor="#424242"
       thumbImage={progressThumbImage}
     />
   );
@@ -41,7 +47,7 @@ const styles = StyleSheet.create({
   slider: {
     width: '100%',
     height: 30,
-  }
+  },
 });
 
 export default ProgressBar;
