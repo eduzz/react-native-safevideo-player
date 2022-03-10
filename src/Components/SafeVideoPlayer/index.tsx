@@ -77,6 +77,8 @@ interface SafeVideoPlayerProps {
   disableOptions?: boolean | IOption[];
   playOnStart?: boolean;
   playInBackground?: boolean;
+  defaultQuality?: number | 'auto';
+  onQualityChange?: (quality: number | 'auto') => void;
 }
 
 const CONTROLS_DISPLAY_TIME = 4000;
@@ -106,6 +108,8 @@ const SafeVideoPlayer = ({
   disableCloseButton,
   disableCast,
   onRequestClose,
+  defaultQuality = 'auto',
+  onQualityChange,
   ...videoProps
 }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
@@ -347,16 +351,25 @@ const SafeVideoPlayer = ({
     setRate(_rate);
   };
 
-  const setVideoQuality = (quality: number | 'auto') => () => {
-    const qualitySource = qualitySources.find(
-      (_qualitySource) => _qualitySource.quality === quality
-    );
+  const setVideoQuality = useCallback(
+    (quality: number | 'auto') => () => {
+      const qualitySource = qualitySources.find(
+        (_qualitySource) => _qualitySource.quality === quality
+      );
 
-    if (qualitySource) {
-      setSource(qualitySource);
-      videoRef.current.seek(videoInfo.currentTime);
+      if (qualitySource) {
+        setSource(qualitySource);
+        onQualityChange?.(qualitySource.quality);
+      }
+    },
+    [qualitySources, onQualityChange]
+  );
+
+  useEffect(() => {
+    if (qualitySources?.length) {
+      setVideoQuality(defaultQuality)();
     }
-  };
+  }, [defaultQuality, qualitySources, setVideoQuality]);
 
   const enterFullscreen = () => {
     setFullscreen(true);
