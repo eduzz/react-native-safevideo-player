@@ -21,6 +21,8 @@ import Video, {
   OnProgressData,
   VideoProperties,
 } from 'react-native-video';
+import forward from '../../Assets/forward.png';
+import backward from '../../Assets/backward.png';
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
 import enterFullscreenImage from '../../Assets/enter-fullscreen.png';
@@ -240,23 +242,33 @@ const SafeVideoPlayer = ({
           .map((quality) => quality.slice(quality.indexOf('RESOLUTION=') + 11));
         const uris = lines.filter((_, index) => index % 2 !== 0);
 
+        const _qualitySources = resolutions
+          .map((resolution, index) => ({
+            uri: uris[index],
+            quality: parseInt(
+              resolution.slice(resolution.indexOf('x') + 1),
+              10
+            ),
+          }))
+          .sort((a, b) => b.quality - a.quality);
+
         setQualitySources([
           {
             uri: source.uri,
             quality: 'auto',
           },
-          ...resolutions
-            .map((resolution, index) => ({
-              uri: uris[index],
-              quality: parseInt(
-                resolution.slice(resolution.indexOf('x') + 1),
-                10
-              ),
-            }))
-            .sort((a, b) => b.quality - a.quality),
+          ..._qualitySources,
         ]);
+
+        const defaultQualitySource = _qualitySources.find(
+          (_qualitySource) => _qualitySource.quality === defaultQuality
+        );
+
+        if (defaultQualitySource) {
+          setSource(defaultQualitySource);
+        }
       });
-  }, [source.uri]);
+  }, [defaultQuality, source.uri]);
 
   const play = useCallback(
     (event?: GestureResponderEvent) => {
@@ -351,25 +363,16 @@ const SafeVideoPlayer = ({
     setRate(_rate);
   };
 
-  const setVideoQuality = useCallback(
-    (quality: number | 'auto') => () => {
-      const qualitySource = qualitySources.find(
-        (_qualitySource) => _qualitySource.quality === quality
-      );
+  const setVideoQuality = (quality: number | 'auto') => () => {
+    const qualitySource = qualitySources.find(
+      (_qualitySource) => _qualitySource.quality === quality
+    );
 
-      if (qualitySource) {
-        setSource(qualitySource);
-        onQualityChange?.(qualitySource.quality);
-      }
-    },
-    [qualitySources, onQualityChange]
-  );
-
-  useEffect(() => {
-    if (qualitySources?.length) {
-      setVideoQuality(defaultQuality)();
+    if (qualitySource) {
+      setSource(qualitySource);
+      onQualityChange?.(qualitySource.quality);
     }
-  }, [defaultQuality, qualitySources, setVideoQuality]);
+  };
 
   const enterFullscreen = () => {
     setFullscreen(true);
@@ -488,6 +491,19 @@ const SafeVideoPlayer = ({
     return timeString;
   };
 
+  const handleForwardOrBackward = (type: 'forward' | 'backward') => {
+    let currentTime = 0;
+
+    if (type === 'forward') {
+      currentTime = videoInfo.currentTime + 10;
+    } else {
+      currentTime = videoInfo.currentTime - 10;
+    }
+
+    setVideoInfo({ ...videoInfo, currentTime });
+    videoRef.current.seek(currentTime);
+  };
+
   return (
     <View
       style={[containerStyle, { backgroundColor }]}
@@ -552,12 +568,29 @@ const SafeVideoPlayer = ({
             ) ? (
               <Loading />
             ) : (
-              <TouchableOpacity onPress={playing ? pause : play}>
-                <Image
-                  style={styles.playPauseIcon}
-                  source={playing ? pauseImage : playImage}
-                />
-              </TouchableOpacity>
+              <View style={styles.actionControlls}>
+                <TouchableOpacity
+                  style={styles.buttonAction}
+                  onPress={() => handleForwardOrBackward('backward')}
+                >
+                  <Image style={styles.iconAction} source={backward} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonAction}
+                  onPress={playing ? pause : play}
+                >
+                  <Image
+                    style={styles.iconAction}
+                    source={playing ? pauseImage : playImage}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonAction}
+                  onPress={() => handleForwardOrBackward('forward')}
+                >
+                  <Image style={styles.iconAction} source={forward} />
+                </TouchableOpacity>
+              </View>
             )}
           </View>
           <View style={styles.footer}>
@@ -718,6 +751,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+
+  actionControlls: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-around',
+  },
+  buttonAction: {
+    width: 100,
+    height: 130,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconAction: {
+    width: 50,
+    height: 50,
+  },
   controlsContent: {
     flex: 1,
   },
@@ -768,10 +817,6 @@ const styles = StyleSheet.create({
   },
   player: {
     flex: 1,
-  },
-  playPauseIcon: {
-    width: 50,
-    height: 50,
   },
   footer: {
     padding: 16,
