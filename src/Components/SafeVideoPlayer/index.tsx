@@ -240,23 +240,33 @@ const SafeVideoPlayer = ({
           .map((quality) => quality.slice(quality.indexOf('RESOLUTION=') + 11));
         const uris = lines.filter((_, index) => index % 2 !== 0);
 
+        const _qualitySources = resolutions
+          .map((resolution, index) => ({
+            uri: uris[index],
+            quality: parseInt(
+              resolution.slice(resolution.indexOf('x') + 1),
+              10
+            ),
+          }))
+          .sort((a, b) => b.quality - a.quality);
+
         setQualitySources([
           {
             uri: source.uri,
             quality: 'auto',
           },
-          ...resolutions
-            .map((resolution, index) => ({
-              uri: uris[index],
-              quality: parseInt(
-                resolution.slice(resolution.indexOf('x') + 1),
-                10
-              ),
-            }))
-            .sort((a, b) => b.quality - a.quality),
+          ..._qualitySources,
         ]);
+
+        const defaultQualitySource = _qualitySources.find(
+          (_qualitySource) => _qualitySource.quality === defaultQuality
+        );
+
+        if (defaultQualitySource) {
+          setSource(defaultQualitySource);
+        }
       });
-  }, [source.uri]);
+  }, [defaultQuality, source.uri]);
 
   const play = useCallback(
     (event?: GestureResponderEvent) => {
@@ -351,25 +361,16 @@ const SafeVideoPlayer = ({
     setRate(_rate);
   };
 
-  const setVideoQuality = useCallback(
-    (quality: number | 'auto') => () => {
-      const qualitySource = qualitySources.find(
-        (_qualitySource) => _qualitySource.quality === quality
-      );
+  const setVideoQuality = (quality: number | 'auto') => () => {
+    const qualitySource = qualitySources.find(
+      (_qualitySource) => _qualitySource.quality === quality
+    );
 
-      if (qualitySource) {
-        setSource(qualitySource);
-        onQualityChange?.(qualitySource.quality);
-      }
-    },
-    [qualitySources, onQualityChange]
-  );
-
-  useEffect(() => {
-    if (qualitySources?.length) {
-      setVideoQuality(defaultQuality)();
+    if (qualitySource) {
+      setSource(qualitySource);
+      onQualityChange?.(qualitySource.quality);
     }
-  }, [defaultQuality, qualitySources, setVideoQuality]);
+  };
 
   const enterFullscreen = () => {
     setFullscreen(true);
