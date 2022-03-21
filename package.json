@@ -65,7 +65,7 @@
     "pod-install": "^0.1.0",
     "prettier": "^2.0.5",
     "react": "16.13.1",
-    "react-native": "0.63.4",
+    "react-native": "0.64.1",
     "react-native-builder-bob": "^0.17.1",
     "react-native-google-cast": "^4.0.2",
     "react-native-music-control": "^1.4.0",
