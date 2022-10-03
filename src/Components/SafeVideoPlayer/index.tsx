@@ -155,7 +155,7 @@ const SafeVideoPlayer = ({
       switch (castState) {
         case CastState.CONNECTED:
           remoteMediaClient.getMediaStatus().then((_mediaStatus) => {
-            if (!castId || _mediaStatus?.mediaInfo.contentId !== castId) {
+            if (!castId || _mediaStatus?.mediaInfo?.contentId !== castId) {
               remoteMediaClient.loadMedia({
                 autoplay: true,
                 startTime: videoInfo.currentTime || startAt,
