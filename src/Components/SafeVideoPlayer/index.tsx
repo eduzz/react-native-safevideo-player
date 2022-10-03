@@ -21,6 +21,8 @@ import Video, {
   OnProgressData,
   VideoProperties,
 } from 'react-native-video';
+import forward from '../../Assets/forward.png';
+import backward from '../../Assets/backward.png';
 import playImage from '../../Assets/play.png';
 import pauseImage from '../../Assets/pause.png';
 import enterFullscreenImage from '../../Assets/enter-fullscreen.png';
@@ -489,6 +491,19 @@ const SafeVideoPlayer = ({
     return timeString;
   };
 
+  const handleForwardOrBackward = (type: 'forward' | 'backward') => {
+    let currentTime = 0;
+
+    if (type === 'forward') {
+      currentTime = videoInfo.currentTime + 10;
+    } else {
+      currentTime = videoInfo.currentTime - 10;
+    }
+
+    setVideoInfo({ ...videoInfo, currentTime });
+    videoRef.current.seek(currentTime);
+  };
+
   return (
     <View
       style={[containerStyle, { backgroundColor }]}
@@ -553,12 +568,29 @@ const SafeVideoPlayer = ({
             ) ? (
               <Loading />
             ) : (
-              <TouchableOpacity onPress={playing ? pause : play}>
-                <Image
-                  style={styles.playPauseIcon}
-                  source={playing ? pauseImage : playImage}
-                />
-              </TouchableOpacity>
+              <View style={styles.actionControlls}>
+                <TouchableOpacity
+                  style={styles.buttonAction}
+                  onPress={() => handleForwardOrBackward('backward')}
+                >
+                  <Image style={styles.iconAction} source={backward} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonAction}
+                  onPress={playing ? pause : play}
+                >
+                  <Image
+                    style={styles.iconAction}
+                    source={playing ? pauseImage : playImage}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.buttonAction}
+                  onPress={() => handleForwardOrBackward('forward')}
+                >
+                  <Image style={styles.iconAction} source={forward} />
+                </TouchableOpacity>
+              </View>
             )}
           </View>
           <View style={styles.footer}>
@@ -719,6 +751,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+
+  actionControlls: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-around',
+  },
+  buttonAction: {
+    width: 100,
+    height: 130,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconAction: {
+    width: 50,
+    height: 50,
+  },
   controlsContent: {
     flex: 1,
   },
@@ -769,10 +817,6 @@ const styles = StyleSheet.create({
   },
   player: {
     flex: 1,
-  },
-  playPauseIcon: {
-    width: 50,
-    height: 50,
   },
   footer: {
     padding: 16,
