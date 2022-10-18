@@ -419,6 +419,7 @@ const SafeVideoPlayer = ({
     });
     videoRef.current.seek(startAt);
     setLoading(false);
+    fadeControls(false);
   };
 
   const onVideoProgress = (data: OnProgressData) => {
