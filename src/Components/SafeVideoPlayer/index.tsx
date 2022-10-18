@@ -526,8 +526,10 @@ const SafeVideoPlayer = ({
     switch (language) {
       case 'pt-br':
         return 'Português';
-      case 'en-US':
+      case 'en-us':
         return 'Inglês';
+      case 'es-es':
+        return 'Espanhol';
       default:
         return 'Desativado';
     }
@@ -795,9 +797,7 @@ const SafeVideoPlayer = ({
                 <OptionItem
                   key={index}
                   title={subtitleLanguage(item.language || '')}
-                  onPress={selectSubtitleOption(
-                    (item.language || '').toLowerCase()
-                  )}
+                  onPress={selectSubtitleOption(item.language || '')}
                   iconImage={selectedSubtitle === item.language && checkImage}
                   color={textColor}
                 />
