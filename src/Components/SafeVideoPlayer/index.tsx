@@ -33,6 +33,7 @@ import videoSpeedImage from '../../Assets/video-speed.png';
 import optionsImage from '../../Assets/options.png';
 import closeImage from '../../Assets/close.png';
 import checkImage from '../../Assets/check.png';
+import subtitleImage from '../../Assets/subtitle.png';
 import ProgressBar from './ProgressBar';
 import OptionsModal from './OptionsModal';
 import OptionItem from './OptionsModal/OptionItem';
@@ -53,7 +54,7 @@ interface ISource {
   quality: number | 'auto';
 }
 
-type IOption = 'quality' | 'rate';
+type IOption = 'quality' | 'rate' | 'subtitle';
 
 interface SafeVideoPlayerProps {
   title?: string;
@@ -112,6 +113,7 @@ const SafeVideoPlayer = ({
   onRequestClose,
   defaultQuality = 'auto',
   onQualityChange,
+  textTracks,
   ...videoProps
 }: VideoProperties & SafeVideoPlayerProps) => {
   const [playing, setPlaying] = useState(playOnStart || false);
@@ -124,6 +126,8 @@ const SafeVideoPlayer = ({
   const [showingSettings, setShowingSettings] = useState(false);
   const [showingSpeedOptions, setShowingSpeedOptions] = useState(false);
   const [showingQualityOptions, setShowingQualityOptions] = useState(false);
+  const [showingSubtitleOptions, setShowingSubtitleOptions] = useState(false);
+  const [selectedSubtitle, setSelectedSubtitle] = useState<string>('disable');
   const [qualitySources, setQualitySources] = useState<ISource[]>([]);
   const [_disableOptions] = useState(
     Array.isArray(disableOptions)
@@ -479,6 +483,15 @@ const SafeVideoPlayer = ({
     setShowingQualityOptions(false);
   };
 
+  const showSubtitleOptions = () => {
+    hideOptions();
+    setShowingSubtitleOptions(true);
+  };
+
+  const hideSubtitleOptions = () => {
+    setShowingSubtitleOptions(false);
+  };
+
   const formatTime = (seconds: number) => {
     const date = new Date(0);
 
@@ -503,6 +516,21 @@ const SafeVideoPlayer = ({
 
     setVideoInfo({ ...videoInfo, currentTime });
     videoRef.current.seek(currentTime);
+  };
+
+  const selectSubtitleOption = (option: string) => () => {
+    setSelectedSubtitle(option.toLowerCase());
+  };
+
+  const subtitleLanguage = (language: string) => {
+    switch (language) {
+      case 'pt-br':
+        return 'Português';
+      case 'en-US':
+        return 'Inglês';
+      default:
+        return 'Desativado';
+    }
   };
 
   return (
@@ -535,6 +563,8 @@ const SafeVideoPlayer = ({
         style={styles.player}
         ignoreSilentSwitch="ignore"
         playInBackground={playInBackground}
+        selectedTextTrack={{ type: 'language', value: selectedSubtitle }}
+        textTracks={textTracks}
         {...videoProps}
       />
       <Animated.View
@@ -637,6 +667,15 @@ const SafeVideoPlayer = ({
             backgroundColor={backgroundColor}
             onRequestClose={hideOptions}
           >
+            {!_disableOptions?.subtitle &&
+              castState !== CastState.CONNECTED && (
+                <OptionItem
+                  title="Legenda"
+                  iconImage={subtitleImage}
+                  color={textColor}
+                  onPress={showSubtitleOptions}
+                />
+              )}
             {!!menuOption &&
               [
                 ...(menuOption?.length ? menuOption : [menuOption]),
@@ -737,6 +776,31 @@ const SafeVideoPlayer = ({
                 iconImage={rate === 2 && checkImage}
                 color={textColor}
               />
+            </OptionsModal>
+          )}
+          {!_disableOptions?.subtitle && (
+            <OptionsModal
+              visible={showingSubtitleOptions}
+              textColor={textColor}
+              backgroundColor={backgroundColor}
+              onRequestClose={hideSubtitleOptions}
+            >
+              <OptionItem
+                title="Desativado"
+                onPress={selectSubtitleOption('disable')}
+                iconImage={selectedSubtitle === 'disable' && checkImage}
+                color={textColor}
+              />
+              {textTracks?.map((item) => (
+                <OptionItem
+                  title={subtitleLanguage(item.language || '')}
+                  onPress={selectSubtitleOption(
+                    (item.language || '').toLowerCase()
+                  )}
+                  iconImage={selectedSubtitle === item.language && checkImage}
+                  color={textColor}
+                />
+              ))}
             </OptionsModal>
           )}
         </>
