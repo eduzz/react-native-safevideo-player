@@ -791,8 +791,9 @@ const SafeVideoPlayer = ({
                 iconImage={selectedSubtitle === 'disable' && checkImage}
                 color={textColor}
               />
-              {textTracks?.map((item) => (
+              {textTracks?.map((item, index) => (
                 <OptionItem
+                  key={index}
                   title={subtitleLanguage(item.language || '')}
                   onPress={selectSubtitleOption(
                     (item.language || '').toLowerCase()
